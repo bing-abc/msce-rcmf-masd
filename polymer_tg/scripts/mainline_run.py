@@ -106,8 +106,8 @@ WEAK_CLUSTER_CODE = 1
 UNSTABLE_CLUSTER_CODE = 2
 LOCKED_FILES = (
     ROOT / "models" / "fusion.py",
-    ROOT / "polyuatg_clean" / "scripts" / "masd_v3_run.py",
-    ROOT / "polyuatg_clean" / "scripts" / "masd_v3_eval.py",
+    ROOT / "polymer_tg" / "scripts" / "mainline_run.py",
+    ROOT / "polymer_tg" / "scripts" / "mainline_eval.py",
 )
 
 

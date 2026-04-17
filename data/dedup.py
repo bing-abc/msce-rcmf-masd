@@ -105,7 +105,7 @@ def source_specs() -> list[SourceSpec]:
             name="polymetrix_tg",
             path=_resolve_source_path(
                 "polymetrix_tg.csv",
-                "polyuatg_clean/data/polymer/raw/polymetrix_tg.csv",
+                "polymer_tg/data/polymer/raw/polymetrix_tg.csv",
             ),
             smiles_col="polymer_smiles",
             target_col="Tg",
@@ -129,7 +129,7 @@ def source_specs() -> list[SourceSpec]:
             name="step250_trackB_experimental_only",
             path=_resolve_source_path(
                 "step250_trackB_experimental_only.csv",
-                "polyuatg_clean/data/polymer_external/step250_tracks/processed/step250_trackB_experimental_only.csv",
+                "polymer_tg/data/polymer_external/step250_tracks/processed/step250_trackB_experimental_only.csv",
             ),
             smiles_col="smiles",
             target_col="y_target",

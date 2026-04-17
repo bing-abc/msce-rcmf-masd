@@ -32,7 +32,7 @@ from train.full_train import diagnostic_config, load_artifacts, make_loader, pre
 from train.mspce_repair import ensure_multiscale_features, train_repair_student
 from train.rcmf_min_repair import train_rcmf_external_focus_student, train_rcmf_student
 
-from polyuatg_clean.scripts.masd_v3_run import (
+from polymer_tg.scripts.mainline_run import (
     CURRENT_MODE,
     DIAG_ROOT,
     build_chemistry_tag_lookup,

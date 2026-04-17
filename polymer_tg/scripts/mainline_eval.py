@@ -26,7 +26,7 @@ DIAG_ROOT = ROOT / "outputs" / "exp" / "diagnostics"
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from polyuatg_clean.scripts.masd_v3_run import (  # noqa: E402
+from polymer_tg.scripts.mainline_run import (  # noqa: E402
     CURRENT_STAGE_NAME,
     CURRENT_STAGE_ALIASES,
     EXTERNAL_PASS_DELTA,
@@ -687,7 +687,7 @@ def plot_loss_design_figure(figure_dir: Path) -> None:
     ax.text(
         0.5,
         0.02,
-        "Loss terms are read from the active `masd_current_loss()` implementation in `masd_v3_run.py`.",
+        "Loss terms are read from the active `masd_current_loss()` implementation in `mainline_run.py`.",
         ha="center",
         fontsize=9,
         color=PAPER_PALETTE["slate"],
@@ -1212,7 +1212,7 @@ def ensure_refinement_outputs(run_dir: Path) -> None:
     if resolved_results.exists() and resolved_stats.exists():
         return
     raise FileNotFoundError(
-        "no refinement-stage artifacts were found; run masd_v3_run.py first or provide the archived diagnostic package"
+        "no refinement-stage artifacts were found; run mainline_run.py first or provide the archived diagnostic package"
     )
 
 
@@ -2338,8 +2338,8 @@ def evaluate_cms_risk_closure(output_prefix: str) -> int:
         ("train/seeds.py", "train_core", "seed utilities for final audit reproducibility", "ready_local_package"),
         ("eval/compare.py", "eval_core", "paired comparisons and audit utilities", "ready_local_package"),
         ("eval/metrics.py", "eval_core", "metric helpers for final exports", "ready_local_package"),
-        ("polyuatg_clean/scripts/masd_v3_run.py", "entrypoint", "current final run entry", "ready_local_package"),
-        ("polyuatg_clean/scripts/masd_v3_eval.py", "entrypoint", "current final eval/export entry", "ready_local_package"),
+        ("polymer_tg/scripts/mainline_run.py", "entrypoint", "current final run entry", "ready_local_package"),
+        ("polymer_tg/scripts/mainline_eval.py", "entrypoint", "current final eval/export entry", "ready_local_package"),
         ("README.md", "meta", "project overview", "ready_local_package"),
         ("requirements.txt", "meta", "environment requirements", "ready_local_package"),
     ]
@@ -2357,22 +2357,22 @@ def evaluate_cms_risk_closure(output_prefix: str) -> int:
         "",
         "## Environment / Import Checks",
         "```powershell",
-        "python -m py_compile polyuatg_clean/scripts/masd_v3_run.py polyuatg_clean/scripts/masd_v3_eval.py",
-        "python polyuatg_clean/scripts/masd_v3_run.py --help",
-        "python polyuatg_clean/scripts/masd_v3_eval.py --help",
+        "python -m py_compile polymer_tg/scripts/mainline_run.py polymer_tg/scripts/mainline_eval.py",
+        "python polymer_tg/scripts/mainline_run.py --help",
+        "python polymer_tg/scripts/mainline_eval.py --help",
         "```",
         "",
         "## Final Mainline Evaluation / Packaging",
         "```powershell",
-        "python polyuatg_clean/scripts/masd_v3_eval.py --run-dir outputs/exp/diagnostics/masd_tailfix --output-prefix masd_final",
-        "python polyuatg_clean/scripts/masd_v3_eval.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix masd_final_conservative_package",
-        "python polyuatg_clean/scripts/masd_v3_eval.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix cms_risk_closure",
+        "python polymer_tg/scripts/mainline_eval.py --run-dir outputs/exp/diagnostics/masd_tailfix --output-prefix masd_final",
+        "python polymer_tg/scripts/mainline_eval.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix masd_final_conservative_package",
+        "python polymer_tg/scripts/mainline_eval.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix cms_risk_closure",
         "```",
         "",
         "## Historical Training Entry Kept For Reproducibility",
         "```powershell",
-        "python polyuatg_clean/scripts/masd_v3_run.py --run-dir outputs/exp/diagnostics/masd_tailfix --output-prefix masd_tailfix --mainline-seeds 15,16,17,18,19 --external-supporting-seeds 15,16,17,18,19 --ablation-seeds 15,16,17,18,19",
-        "python polyuatg_clean/scripts/masd_v3_run.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix masd_final_signrate_lock --mainline-seeds 0,1,4,7,12,14,19 --external-supporting-seeds 12,14,19 --ablation-seeds \"\"",
+        "python polymer_tg/scripts/mainline_run.py --run-dir outputs/exp/diagnostics/masd_tailfix --output-prefix masd_tailfix --mainline-seeds 15,16,17,18,19 --external-supporting-seeds 15,16,17,18,19 --ablation-seeds 15,16,17,18,19",
+        "python polymer_tg/scripts/mainline_run.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix masd_final_signrate_lock --mainline-seeds 0,1,4,7,12,14,19 --external-supporting-seeds 12,14,19 --ablation-seeds \"\"",
         "```",
         "",
         "Note: the retained repository guarantees import/eval/export reproducibility. Full public release still needs repository/DOI publication outside this local package.",
@@ -2706,8 +2706,8 @@ def evaluate_cms_submit_package(output_prefix: str) -> int:
         ("train/seeds.py", "train_core", "seed utilities", "planned_public_release"),
         ("eval/compare.py", "eval_core", "comparison utilities", "planned_public_release"),
         ("eval/metrics.py", "eval_core", "metric helpers", "planned_public_release"),
-        ("polyuatg_clean/scripts/masd_v3_run.py", "entrypoint", "final run entry", "planned_public_release"),
-        ("polyuatg_clean/scripts/masd_v3_eval.py", "entrypoint", "final evaluation/export entry", "planned_public_release"),
+        ("polymer_tg/scripts/mainline_run.py", "entrypoint", "final run entry", "planned_public_release"),
+        ("polymer_tg/scripts/mainline_eval.py", "entrypoint", "final evaluation/export entry", "planned_public_release"),
         ("README.md", "meta", "project overview", "planned_public_release"),
         ("requirements.txt", "meta", "environment spec", "planned_public_release"),
     ]
@@ -2723,22 +2723,22 @@ def evaluate_cms_submit_package(output_prefix: str) -> int:
         "",
         "## Sanity checks",
         "```powershell",
-        "python -m py_compile polyuatg_clean/scripts/masd_v3_run.py polyuatg_clean/scripts/masd_v3_eval.py",
-        "python polyuatg_clean/scripts/masd_v3_run.py --help",
-        "python polyuatg_clean/scripts/masd_v3_eval.py --help",
+        "python -m py_compile polymer_tg/scripts/mainline_run.py polymer_tg/scripts/mainline_eval.py",
+        "python polymer_tg/scripts/mainline_run.py --help",
+        "python polymer_tg/scripts/mainline_eval.py --help",
         "```",
         "",
         "## Final package regeneration (no new training)",
         "```powershell",
-        "python polyuatg_clean/scripts/masd_v3_eval.py --run-dir outputs/exp/diagnostics/masd_tailfix --output-prefix masd_final",
-        "python polyuatg_clean/scripts/masd_v3_eval.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix masd_final_conservative_package",
-        "python polyuatg_clean/scripts/masd_v3_eval.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix cms_risk_closure",
-        "python polyuatg_clean/scripts/masd_v3_eval.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix cms_submit_package",
+        "python polymer_tg/scripts/mainline_eval.py --run-dir outputs/exp/diagnostics/masd_tailfix --output-prefix masd_final",
+        "python polymer_tg/scripts/mainline_eval.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix masd_final_conservative_package",
+        "python polymer_tg/scripts/mainline_eval.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix cms_risk_closure",
+        "python polymer_tg/scripts/mainline_eval.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix cms_submit_package",
         "```",
         "",
         "## Historical final-training provenance (do not rerun for submission packaging)",
         "```powershell",
-        "python polyuatg_clean/scripts/masd_v3_run.py --run-dir outputs/exp/diagnostics/masd_tailfix --output-prefix masd_tailfix --mainline-seeds 15,16,17,18,19 --external-supporting-seeds 15,16,17,18,19 --ablation-seeds 15,16,17,18,19",
+        "python polymer_tg/scripts/mainline_run.py --run-dir outputs/exp/diagnostics/masd_tailfix --output-prefix masd_tailfix --mainline-seeds 15,16,17,18,19 --external-supporting-seeds 15,16,17,18,19 --ablation-seeds 15,16,17,18,19",
         "```",
     ]
     (package_dir / "reproduce_commands.md").write_text("\n".join(reproduce_lines), encoding="utf-8")
@@ -3266,7 +3266,7 @@ def evaluate_cms_risk_reduction(output_prefix: str) -> int:
     reproduce_text = (submit_dir / "reproduce_commands.md").read_text(encoding="utf-8")
     reproduce_text += (
         "\n\n```powershell\n"
-        "python polyuatg_clean/scripts/masd_v3_eval.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix cms_risk_reduction\n"
+        "python polymer_tg/scripts/mainline_eval.py --run-dir outputs/exp/diagnostics/masd_final_signrate_lock --output-prefix cms_risk_reduction\n"
         "```\n"
     )
     (package_dir / "reproduce_commands.md").write_text(reproduce_text, encoding="utf-8")
@@ -5151,7 +5151,7 @@ def evaluate_final_trisoup_100run(run_dir: Path, output_prefix: str) -> int:
         reported_method_name = "main_core_sci2_masd_final_trisoup_100run"
         assumption_text = (
             "The locked package does not preserve a single global trisoup coefficient file. "
-            "This 100-run reconfirmation therefore reuses the frozen trisoup selection grid and criteria already defined in masd_v3_run.py, "
+            "This 100-run reconfirmation therefore reuses the frozen trisoup selection grid and criteria already defined in mainline_run.py, "
             "without changing MSPCE/RCMF/MASD structure, loss definitions, or split protocol."
         )
     else:

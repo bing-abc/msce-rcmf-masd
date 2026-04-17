@@ -1,13 +1,17 @@
 from __future__ import annotations
 
-"""RCMF anchor contribution ablation.
+"""MSCE top-k sensitivity ablation.
 
-Compares the full MSCE-RCMF-MASD chain against the same chain with RCMF's
-anchor contribution disabled (MASD anchors on the MSCE prediction instead of
-the RCMF-conditioned prediction).  This isolates the value of reliability-
-conditioned fusion as a bridge for the MASD correction step.
+Varies the number of active context scales selected by the MSCE top-k gate
+(k = 1, 2, 3, 4) on the fixed five-seed tranche (15-19).
 
-Run on the fixed five-seed tranche (15-19).
+k=1: only one scale active per sample (extreme selection).
+k=2: two scales active.
+k=3: three scales active (paper default).
+k=4: all four scales active (no gated selection, full pooling).
+
+The full pipeline (stages 1-4) is rerun for each k value because MSCE is trained
+in Stage 2 and the gate behavior affects downstream RCMF and MASD training.
 """
 
 import argparse
@@ -15,7 +19,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -27,7 +30,7 @@ from train.full_train import diagnostic_config, load_artifacts, make_loader, pre
 from train.mspce_repair import ensure_multiscale_features, train_repair_student
 from train.rcmf_min_repair import train_rcmf_external_focus_student, train_rcmf_student
 
-from polyuatg_clean.scripts.masd_v3_run import (
+from polymer_tg.scripts.mainline_run import (
     CURRENT_MODE,
     DIAG_ROOT,
     build_chemistry_tag_lookup,
@@ -37,21 +40,17 @@ from polyuatg_clean.scripts.masd_v3_run import (
     evaluate_stage,
     lock_snapshot,
     parse_seed_list,
-    save_bundle,
     save_results_csv,
     train_masd_current_student,
 )
 
-CONDITIONS = [
-    {"label": "rcmf_anchor_enabled",  "disable_rcmf_anchor": False},
-    {"label": "rcmf_anchor_disabled", "disable_rcmf_anchor": True},
-]
+K_VALUES = [1, 2, 3, 4]
 
 
-def run_anchor_ablation_seed(
+def run_k_ablation_seed(
     *,
     seed: int,
-    conditions: list[dict[str, Any]],
+    k_values: list[int],
     dataset: pd.DataFrame,
     features: dict[str, Any],
     splits: dict[str, Any],
@@ -63,11 +62,9 @@ def run_anchor_ablation_seed(
     primary_loader = make_loader(seed_tensors, split["test"], base_config.batch_size, shuffle=False)
 
     rows: list[dict[str, Any]] = []
-    for cond in conditions:
-        label = cond["label"]
-        disable = cond["disable_rcmf_anchor"]
-        # Set override BEFORE all build_model calls inside training stages.
-        set_experiment_overrides(disable_rcmf_anchor=disable)
+    for k in k_values:
+        # Set mspce_top_k BEFORE all build_model calls in every stage.
+        set_experiment_overrides(mspce_top_k=k)
 
         _baseline_model, mspce_model = train_repair_student(
             split=split, seed_tensors=seed_tensors, config=base_config, seed=seed
@@ -89,14 +86,16 @@ def run_anchor_ablation_seed(
 
         clean_metrics, _ = evaluate_stage(
             model, primary_loader, seed_tensors,
-            variant="clean", noise_seed=seed * 1709 + (0 if not disable else 1),
+            variant="clean", noise_seed=seed * 1709 + k,
             return_payload=False,
         )
         rows.append({
             "seed": int(seed),
-            "result_group": "rcmf_anchor_ablation",
-            "condition": label,
-            "disable_rcmf_anchor": bool(disable),
+            "result_group": "msce_topk_ablation",
+            "top_k": int(k),
+            "description": "all scales (no selection)" if k == 4 else (
+                "paper default" if k == 3 else f"top-{k} active"
+            ),
             "primary_clean": float(clean_metrics["mae_k"]),
             "primary_hard_subgroup": float(clean_metrics["hard_subgroup_mae_k"]),
             "hard_mask_rate": float(clean_metrics["hard_mask_rate"]),
@@ -109,41 +108,37 @@ def write_summary(run_dir: Path, rows: list[dict[str, Any]]) -> None:
     if df.empty:
         return
     summary = (
-        df.groupby(["condition", "disable_rcmf_anchor"], as_index=False)[
-            ["primary_clean", "primary_hard_subgroup"]
-        ]
+        df.groupby(["top_k", "description"], as_index=False)[["primary_clean", "primary_hard_subgroup"]]
         .mean()
+        .sort_values("top_k")
     )
-    summary_path = run_dir / "rcmf_anchor_ablation_summary.csv"
-    summary.to_csv(summary_path, index=False)
+    summary.to_csv(run_dir / "msce_topk_ablation_summary.csv", index=False)
 
     lines = [
-        "# RCMF Anchor Contribution Ablation",
+        "# MSCE Top-k Sensitivity",
         "",
-        "Fixed five-seed tranche: 15--19.",
+        "Fixed five-seed tranche: 15--19. Full pipeline rerun for each k.",
         "",
-        "| Condition | Disable RCMF anchor | Primary MAE (K) | Hard MAE (K) |",
-        "|:---|:---:|---:|---:|",
+        "| k | Primary MAE (K) | Hard MAE (K) | Note |",
+        "|:---:|---:|---:|:---|",
     ]
     for row in summary.itertuples(index=False):
+        marker = " *" if int(row.top_k) == 3 else ""
         lines.append(
-            f"| {row.condition} | {row.disable_rcmf_anchor} |"
-            f" {float(row.primary_clean):.4f} | {float(row.primary_hard_subgroup):.4f} |"
+            f"| {int(row.top_k)} | {float(row.primary_clean):.4f} |"
+            f" {float(row.primary_hard_subgroup):.4f} | {row.description}{marker} |"
         )
-    lines += [
-        "",
-        "RCMF anchor enabled = MASD anchors on rcmf_min_pred (full chain).",
-        "RCMF anchor disabled = MASD anchors on mspce_repair_pred (RCMF conditioning bypassed for MASD).",
-    ]
-    (run_dir / "rcmf_anchor_ablation_summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    lines += ["", "* paper default"]
+    (run_dir / "msce_topk_ablation_summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("\n".join(lines))
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="RCMF anchor contribution ablation.")
+    parser = argparse.ArgumentParser(description="MSCE top-k sensitivity ablation.")
     parser.add_argument("--run-dir", type=str, required=True)
-    parser.add_argument("--output-prefix", type=str, default="rcmf_anchor_ablation")
+    parser.add_argument("--output-prefix", type=str, default="msce_topk_ablation")
     parser.add_argument("--seeds", type=str, default="15,16,17,18,19")
+    parser.add_argument("--k-values", type=str, default="1,2,3,4")
     args = parser.parse_args()
 
     enable_determinism(strict=False)
@@ -153,6 +148,7 @@ def main() -> int:
     _ = build_chemistry_tag_lookup(dataset)
     base_config = diagnostic_config()
     seeds = parse_seed_list(args.seeds)
+    k_values = [int(x.strip()) for x in args.k_values.split(",") if x.strip()]
 
     run_dir = Path(args.run_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -161,8 +157,8 @@ def main() -> int:
     all_rows: list[dict[str, Any]] = []
 
     for seed in seeds:
-        rows = run_anchor_ablation_seed(
-            seed=seed, conditions=CONDITIONS, dataset=dataset,
+        rows = run_k_ablation_seed(
+            seed=seed, k_values=k_values, dataset=dataset,
             features=features, splits=splits, base_config=base_config,
             epoch_log=epoch_log,
         )

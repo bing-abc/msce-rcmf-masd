@@ -1,6 +1,6 @@
 ﻿from __future__ import annotations
 
-"""Fasttrack scan over minimal-risk tweaks around the locked full model.
+"""Candidate scan over minimal-risk tweaks around the locked full model.
 
 These runs are decision support for the paper package and are not alternative
 headline results unless a candidate survives the multi-seed confirmation stage.
@@ -19,14 +19,14 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-import polyuatg_clean.scripts.masd_v3_run as masd_run
-from polyuatg_clean.scripts.masd_v3_eval import paired_stats, reduction_interpretation, summary_stats, summarize_payload_metrics
+import polymer_tg.scripts.mainline_run as masd_run
+from polymer_tg.scripts.mainline_eval import paired_stats, reduction_interpretation, summary_stats, summarize_payload_metrics
 from train.experiment_overrides import temporary_experiment_overrides
 from train.full_train import diagnostic_config, load_artifacts, make_loader, prepare_seed_tensors
 from train.mspce_repair import ensure_multiscale_features, train_repair_student
 
 
-RUN_NAME = "pr_fasttrack_20260407"
+RUN_NAME = "candidate_scan_20260407"
 RUN_DIR = ROOT / "outputs" / "exp" / "diagnostics" / RUN_NAME
 CACHE_PATH = RUN_DIR / "cache.pt"
 SCREEN_SEEDS = (0, 1)

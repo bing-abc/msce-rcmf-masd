@@ -1,6 +1,6 @@
 ﻿from __future__ import annotations
 
-"""Follow-up thresholded-MASD scan after the main fasttrack screen."""
+"""Follow-up thresholded-MASD scan after the main candidate screen."""
 
 import json
 import sys
@@ -15,14 +15,14 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-import polyuatg_clean.scripts.masd_v3_run as masd_run
-import polyuatg_clean.scripts.pr_fasttrack_run as base_runner
+import polymer_tg.scripts.mainline_run as masd_run
+import polymer_tg.scripts.candidate_scan as base_runner
 from train.experiment_overrides import temporary_experiment_overrides
 from train.full_train import diagnostic_config, load_artifacts
 from train.mspce_repair import ensure_multiscale_features
 
 
-RUN_NAME = "pr_threshold_scan_20260407"
+RUN_NAME = "threshold_scan_20260407"
 RUN_DIR = ROOT / "outputs" / "exp" / "diagnostics" / RUN_NAME
 CACHE_PATH = RUN_DIR / "cache.pt"
 BASE_CACHE_PATH = base_runner.RUN_DIR / "cache.pt"

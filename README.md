@@ -37,7 +37,7 @@ It is **not** intended to blindly re-host every merged upstream source table. Fo
 - [data](./data): dataset building, canonicalization, feature construction, and split generation
 - [models](./models): backbones, fusion logic, and reusable network modules
 - [train](./train): training harness, calibration helpers, and controlled overrides
-- [polyuatg_clean/scripts](./polyuatg_clean/scripts): paper-facing runners, ablations, and evaluation scripts
+- [polymer_tg/scripts](./polymer_tg/scripts): paper-facing runners, ablations, and evaluation scripts
 - [eval](./eval): metrics and comparator summaries
 
 The local workspace also contains manuscript and packaging assets under `outputs/paper`, but those are kept out of the public code release by default.
@@ -94,31 +94,31 @@ Those files are rebuildable and are ignored by default for public GitHub upload.
 
 ### End-to-end mainline
 
-- [polyuatg_clean/scripts/masd_v3_run.py](./polyuatg_clean/scripts/masd_v3_run.py): main paper-facing training and repeated-run driver
-- [polyuatg_clean/scripts/masd_v3_eval.py](./polyuatg_clean/scripts/masd_v3_eval.py): evaluation packager for tables, diagnostics, and figure support artifacts
+- [polymer_tg/scripts/mainline_run.py](./polymer_tg/scripts/mainline_run.py): main paper-facing training and repeated-run driver
+- [polymer_tg/scripts/mainline_eval.py](./polymer_tg/scripts/mainline_eval.py): evaluation packager for tables, diagnostics, and figure support artifacts
 
 ### Baselines and ablations
 
-- [polyuatg_clean/scripts/descriptor_tree_baselines.py](./polyuatg_clean/scripts/descriptor_tree_baselines.py)
-- [polyuatg_clean/scripts/attentivefp_graph_baseline.py](./polyuatg_clean/scripts/attentivefp_graph_baseline.py)
-- [polyuatg_clean/scripts/masd_slot_ablation.py](./polyuatg_clean/scripts/masd_slot_ablation.py)
-- [polyuatg_clean/scripts/rcmf_anchor_ablation.py](./polyuatg_clean/scripts/rcmf_anchor_ablation.py)
-- [polyuatg_clean/scripts/mspce_k_ablation.py](./polyuatg_clean/scripts/mspce_k_ablation.py)
+- [polymer_tg/scripts/descriptor_tree_baselines.py](./polymer_tg/scripts/descriptor_tree_baselines.py)
+- [polymer_tg/scripts/attentivefp_graph_baseline.py](./polymer_tg/scripts/attentivefp_graph_baseline.py)
+- [polymer_tg/scripts/masd_slot_ablation.py](./polymer_tg/scripts/masd_slot_ablation.py)
+- [polymer_tg/scripts/rcmf_anchor_ablation.py](./polymer_tg/scripts/rcmf_anchor_ablation.py)
+- [polymer_tg/scripts/msce_topk_ablation.py](./polymer_tg/scripts/msce_topk_ablation.py)
 
 ## Canonical reproduction path
 
 Minimal smoke test:
 
 ```powershell
-python polyuatg_clean/scripts/masd_v3_run.py --run-dir outputs/exp/diagnostics/repro_probe_one_seed --output-prefix repro_probe_one_seed --mainline-seeds 18 --external-supporting-seeds 18 --ablation-seeds=
-python polyuatg_clean/scripts/masd_v3_eval.py --run-dir outputs/exp/diagnostics/repro_probe_one_seed --output-prefix repro_probe_one_seed
+python polymer_tg/scripts/mainline_run.py --run-dir outputs/exp/diagnostics/repro_probe_one_seed --output-prefix repro_probe_one_seed --mainline-seeds 18 --external-supporting-seeds 18 --ablation-seeds=
+python polymer_tg/scripts/mainline_eval.py --run-dir outputs/exp/diagnostics/repro_probe_one_seed --output-prefix repro_probe_one_seed
 ```
 
 Current mainline run:
 
 ```powershell
-python polyuatg_clean/scripts/masd_v3_run.py --run-dir outputs/exp/diagnostics/masd_final --output-prefix masd_final
-python polyuatg_clean/scripts/masd_v3_eval.py --run-dir outputs/exp/diagnostics/masd_final --output-prefix masd_final
+python polymer_tg/scripts/mainline_run.py --run-dir outputs/exp/diagnostics/masd_final --output-prefix masd_final
+python polymer_tg/scripts/mainline_eval.py --run-dir outputs/exp/diagnostics/masd_final --output-prefix masd_final
 ```
 
 ## Public release recommendations
