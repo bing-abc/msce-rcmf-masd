@@ -1,0 +1,32 @@
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Local agent / IDE state
+.claude/
+CLAUDE.md
+
+# Generated experiment artifacts and manuscript packaging
+outputs/
+reports/
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.spl
+
+# Rebuildable processed data artifacts
+data/dataset.csv
+data/features.pt
+data/splits.json
+
+# Local drafts and one-off presentation assets
+PR/
+*.pptx

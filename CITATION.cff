@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite the manuscript and the software release."
+title: "Selective Multimodal Regression with Multiscale Context Encoding, Reliability-Conditioned Multimodal Fusion, and Signed Decomposition"
+type: software
+version: "2026.04.17"
+date-released: 2026-04-17
+authors:
+  - family-names: Li
+    given-names: "S. J."
+  - family-names: Zhu
+    given-names: "B."
+  - family-names: Feng
+    given-names: "Y. J."
+  - family-names: Jia
+    given-names: "W. Z."
+  - family-names: Fang
+    given-names: "X."
+  - family-names: Wang
+    given-names: "P."
+repository-code: "https://github.com/bing-abc/msce-rcmf-masd"
+abstract: "Code release for the MSCE-RCMF-MASD selective multimodal regression framework evaluated on polymer glass-transition temperature prediction."
+keywords:
+  - multimodal regression
+  - polymer property prediction
+  - reliability-aware fusion
+  - selective prediction
+  - graph neural networks
