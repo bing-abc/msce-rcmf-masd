@@ -6,17 +6,19 @@ version: "2026.04.17"
 date-released: 2026-04-17
 authors:
   - family-names: Li
-    given-names: "S. J."
+    given-names: "Songjiang"
   - family-names: Zhu
-    given-names: "B."
+    given-names: "Bing"
   - family-names: Feng
-    given-names: "Y. J."
+    given-names: "Yujie"
+  - family-names: Diao
+    given-names: "Yapeng"
   - family-names: Jia
-    given-names: "W. Z."
+    given-names: "Wenzhuo"
   - family-names: Fang
-    given-names: "X."
+    given-names: "Xuan"
   - family-names: Wang
-    given-names: "P."
+    given-names: "Peng"
 repository-code: "https://github.com/bing-abc/msce-rcmf-masd"
 abstract: "Code release for the MSCE-RCMF-MASD selective multimodal regression framework evaluated on polymer glass-transition temperature prediction."
 keywords:

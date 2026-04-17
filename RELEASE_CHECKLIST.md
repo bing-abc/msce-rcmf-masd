@@ -1,13 +1,13 @@
 # GitHub release checklist
 
-Use this checklist before making the repository public.
+Use this checklist before each public release.
 
 ## 1. Repository metadata
 
 - Use `msce-rcmf-masd` as the public repository name unless you deliberately choose a broader project scope.
 - Set the repository name, description, and topics on GitHub.
-- Replace the placeholder URL in `CITATION.cff`.
-- Choose and add a real `LICENSE` file. This is a legal decision and should not be guessed.
+- Confirm the repository URL, author list, and release version in `CITATION.cff`.
+- Keep the `LICENSE` file in sync with the intended public release.
 
 ## 2. Data review
 

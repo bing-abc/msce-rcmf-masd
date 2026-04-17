@@ -14,6 +14,10 @@ The method is a three-stage selective multimodal regression chain:
 
 The evaluation domain is polymer glass-transition temperature (`T_g`) prediction, but the paper is positioned as a pattern-recognition methodology study about uneven branch reliability in multimodal regression.
 
+## Authors
+
+The repository metadata uses the full author names listed in [AUTHORS.md](./AUTHORS.md). The corresponding author for the code release is **Wang Peng**.
+
 ## What this public repository is for
 
 This repository is prepared as a **code release**, not as a dump of the local research workspace.
@@ -119,14 +123,13 @@ python polyuatg_clean/scripts/masd_v3_eval.py --run-dir outputs/exp/diagnostics/
 
 ## Public release recommendations
 
-Before making the repository public:
+For each public release:
 
 - review [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md)
-- choose and add a real software license
 - create a GitHub release tag
 - connect the repository to Zenodo and archive the release
-- replace the placeholder repository URL in [CITATION.cff](./CITATION.cff)
+- update [CITATION.cff](./CITATION.cff) if the release version, DOI, or repository metadata changes
 
 ## Citation
 
-GitHub understands [CITATION.cff](./CITATION.cff). After the repository URL and DOI are available, update that file so the citation shown on GitHub matches the public release.
+GitHub understands [CITATION.cff](./CITATION.cff). After the DOI is available, update that file so the citation shown on GitHub matches the public release.
