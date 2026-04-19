@@ -3,11 +3,13 @@ from __future__ import annotations
 """Build the overlap-purged registry used by the paper-facing experiments.
 
 For public GitHub use, raw source tables are expected under ``data/raw``.
-A legacy sibling-workspace fallback is retained only so the current local
-workspace can still rebuild without copying files around first.
+An optional legacy-data fallback can be provided via ``TG_LEGACY_DATA_ROOT``
+for local rebuilding convenience, but public use should prefer repository-local
+raw files.
 """
 
 import hashlib
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -19,7 +21,7 @@ RDLogger.DisableLog("rdApp.*")
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW_ROOT = ROOT / "data" / "raw"
-LEGACY_ROOT = ROOT.parent / "RCMF-Polymer_vscode"
+LEGACY_ROOT = Path(os.environ["TG_LEGACY_DATA_ROOT"]).expanduser() if os.environ.get("TG_LEGACY_DATA_ROOT") else None
 
 
 @dataclass(frozen=True)
@@ -34,13 +36,14 @@ class SourceSpec:
 
 
 def _resolve_source_path(local_name: str, legacy_relative: str) -> Path:
-    """Prefer repository-local raw files and only then fall back to legacy paths."""
+    """Prefer repository-local raw files and only then fall back to an optional legacy root."""
     local_path = RAW_ROOT / local_name
     if local_path.exists():
         return local_path
-    legacy_path = LEGACY_ROOT / legacy_relative
-    if legacy_path.exists():
-        return legacy_path
+    if LEGACY_ROOT is not None:
+        legacy_path = LEGACY_ROOT / legacy_relative
+        if legacy_path.exists():
+            return legacy_path
     return local_path
 
 

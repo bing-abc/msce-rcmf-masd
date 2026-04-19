@@ -28,9 +28,14 @@ It is intended to provide:
 - the dataset-construction and feature-construction scripts
 - the split-generation logic
 - the experiment entry points used by the paper
+- the protocol-matched baseline and audit scripts referenced by the paper
 - the instructions needed to reproduce the released protocol
 
 It is **not** intended to blindly re-host every merged upstream source table. For public release, the code repository should publish the processing pipeline and source-specific access instructions, while large artifacts and archival snapshots should go to Zenodo or another repository archive.
+
+For public GitHub release, keep the repository focused on reproducible code and
+paper-cited controls. Do not use the repository as a dump for manuscript
+packaging, presentation drafts, or large generated experiment artifacts.
 
 ## Repository layout
 
@@ -105,6 +110,11 @@ Those files are rebuildable and are ignored by default for public GitHub upload.
 - [polymer_tg/scripts/rcmf_anchor_ablation.py](./polymer_tg/scripts/rcmf_anchor_ablation.py)
 - [polymer_tg/scripts/msce_topk_ablation.py](./polymer_tg/scripts/msce_topk_ablation.py)
 
+### Paper-supporting controls
+
+- [train/curriculum_controlled_baseline.py](./train/curriculum_controlled_baseline.py): tests whether hard-sample curriculum alone can reproduce the difficult-sample gain
+- [train/polybert_baseline.py](./train/polybert_baseline.py): same-protocol polyBERT baseline probe
+
 ## Canonical reproduction path
 
 Minimal smoke test:
@@ -119,6 +129,20 @@ Current mainline run:
 ```powershell
 python polymer_tg/scripts/mainline_run.py --run-dir outputs/exp/diagnostics/masd_final --output-prefix masd_final
 python polymer_tg/scripts/mainline_eval.py --run-dir outputs/exp/diagnostics/masd_final --output-prefix masd_final
+```
+
+Paper-supporting controls:
+
+```powershell
+python train/curriculum_controlled_baseline.py --seeds 10,11,12,13,14,15,16,17,18,19
+python train/polybert_baseline.py --seeds 10,11,12,13,14,15,16,17,18,19 --epochs 30
+```
+
+If `polyBERT` is not already cached locally, pass a Hugging Face model
+identifier or local checkpoint path explicitly:
+
+```powershell
+python train/polybert_baseline.py --model-name-or-path kuelumbus/polyBERT
 ```
 
 ## Public release recommendations

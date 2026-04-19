@@ -3292,12 +3292,12 @@ def evaluate_cms_risk_reduction(output_prefix: str) -> int:
     (package_dir / "cms_submission_checklist.md").write_text("\n".join(checklist_lines), encoding="utf-8")
 
     public_release_lines = [
-        "# Public Release TODO",
+        "# Public Release Checklist",
         "",
-        "1. Publish the retained code tree in a public repository.",
-        "2. Deposit a DOI-backed archive and replace the Zenodo template placeholders.",
+        "1. Confirm that the retained code tree matches the public repository snapshot.",
+        "2. Deposit a DOI-backed archive and replace any remaining Zenodo placeholders.",
         "3. Confirm release handling for `data/features.pt` if repository size limits apply.",
-        "4. Add final license text for code and data redistribution.",
+        "4. Verify that license and redistribution notes match the released snapshot.",
         "5. Verify that manifests and result index match the public snapshot exactly.",
     ]
     (package_dir / "public_release_todo.md").write_text("\n".join(public_release_lines), encoding="utf-8")
@@ -6021,4 +6021,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
