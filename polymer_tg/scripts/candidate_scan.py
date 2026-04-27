@@ -23,7 +23,7 @@ import polymer_tg.scripts.mainline_run as masd_run
 from polymer_tg.scripts.mainline_eval import paired_stats, reduction_interpretation, summary_stats, summarize_payload_metrics
 from train.experiment_overrides import temporary_experiment_overrides
 from train.full_train import diagnostic_config, load_artifacts, make_loader, prepare_seed_tensors
-from train.mspce_repair import ensure_multiscale_features, train_repair_student
+from train.msce_stage import ensure_msce_features, train_msce_stage
 
 
 RUN_NAME = "candidate_scan_20260407"
@@ -111,8 +111,8 @@ def model_payload_key(stage_key: str, split_key: str) -> str:
     mapping = {
         ("baseline", "primary"): "baseline_primary_clean",
         ("baseline", "external"): "baseline_external",
-        ("mspce", "primary"): "mspce_primary_clean",
-        ("mspce", "external"): "mspce_external",
+        ("msce", "primary"): "mspce_primary_clean",
+        ("msce", "external"): "mspce_external",
         ("rcmf", "primary"): "rcmf_primary_clean",
         ("rcmf", "external"): "rcmf_external",
         ("full", "primary"): "masd_primary_clean",
@@ -189,11 +189,11 @@ def safe_load_masd_only(
         return cache["masd_only"][key]
     split = masd_run.ensure_protocol_split(splits, dataset, seed=seed)
     seed_tensors = prepare_seed_tensors(features, split["train"], dataset)
-    _baseline_model, mspce_model = train_repair_student(
+    _baseline_model, msce_model = train_msce_stage(
         split=split,
         seed_tensors=seed_tensors,
         config=config,
-        seed=seed,
+        repeat_id=seed,
     )
     masd_overrides = {
         "hard_reweight_alpha": float(best_candidate["overrides"].get("hard_reweight_alpha", 0.0)),
@@ -203,13 +203,13 @@ def safe_load_masd_only(
         "thresholded_masd_gamma": float(best_candidate["overrides"].get("thresholded_masd_gamma", 8.0)),
         "disable_rcmf_anchor": True,
     }
-    with temporary_experiment_overrides(label=f"{best_candidate['label']}_mspce_masd", **masd_overrides):
+    with temporary_experiment_overrides(label=f"{best_candidate['label']}_msce_masd", **masd_overrides):
         model = masd_run.train_masd_current_student(
             split=split,
             seed_tensors=seed_tensors,
             config=config,
             seed=seed,
-            current_rcmf=mspce_model,
+            current_rcmf=msce_model,
             mode=masd_run.CURRENT_MODE,
             selection_policy="tailfix",
             epoch_log=epoch_log,
@@ -233,7 +233,7 @@ def safe_load_masd_only(
         return_payload=True,
     )
     payload = {
-        "label": f"{best_candidate['label']}_mspce_masd",
+        "label": f"{best_candidate['label']}_msce_masd",
         "seed": int(seed),
         "overrides": masd_overrides,
         "metrics": {
@@ -338,7 +338,7 @@ def collect_stage_metric_values(results: dict[int, dict[str, Any]], stage_name: 
             row = masd_run.current_stage_row(rows)
         elif stage_name == "baseline":
             row = row_by_name(rows, "strongest_baseline")
-        elif stage_name == "mspce":
+        elif stage_name == "msce":
             row = row_by_name(rows, "strongest_baseline_plus_mspce")
         elif stage_name == "rcmf":
             row = row_by_name(rows, "strongest_baseline_plus_mspce_rcmf")
@@ -593,9 +593,9 @@ def ablation_summary_rows(
     baseline_hard = summary_stats(collect_stage_metric_values(current_results, "baseline", "primary_hard_subgroup"))
     baseline_external = summary_stats(collect_stage_metric_values(current_results, "baseline", "external_holdout"))
 
-    mspce_primary = summarize_payload_metrics(collect_stage_payloads(current_results, "mspce", "primary"))
-    mspce_hard = summary_stats(collect_stage_metric_values(current_results, "mspce", "primary_hard_subgroup"))
-    mspce_external = summary_stats(collect_stage_metric_values(current_results, "mspce", "external_holdout"))
+    msce_primary = summarize_payload_metrics(collect_stage_payloads(current_results, "msce", "primary"))
+    msce_hard = summary_stats(collect_stage_metric_values(current_results, "msce", "primary_hard_subgroup"))
+    msce_external = summary_stats(collect_stage_metric_values(current_results, "msce", "external_holdout"))
 
     rcmf_primary = summarize_payload_metrics(collect_stage_payloads(best_results, "rcmf", "primary"))
     rcmf_hard = summary_stats(collect_stage_metric_values(best_results, "rcmf", "primary_hard_subgroup"))
@@ -612,9 +612,9 @@ def ablation_summary_rows(
 
     stage_specs = [
         ("Baseline", baseline_primary, baseline_hard, baseline_external),
-        ("+MSPCE", mspce_primary, mspce_hard, mspce_external),
-        ("+MSPCE+RCMF", rcmf_primary, rcmf_hard, rcmf_external),
-        ("+MSPCE+MASD", masd_primary, masd_hard, masd_external),
+        ("+MSCE", msce_primary, msce_hard, msce_external),
+        ("+MSCE+RCMF", rcmf_primary, rcmf_hard, rcmf_external),
+        ("+MSCE+MASD", masd_primary, masd_hard, masd_external),
         ("Full", full_primary, full_hard, full_external),
     ]
     for name, primary_stats, hard_stats, external_stats in stage_specs:
@@ -634,9 +634,9 @@ def ablation_summary_rows(
                 "delta_vs_baseline_main_k": float(baseline_primary["mae"]["mean"] - primary_stats["mae"]["mean"]),
                 "delta_vs_baseline_hard_k": float(baseline_hard["mean"] - hard_stats["mean"]),
                 "delta_vs_baseline_external_k": float(baseline_external["mean"] - external_stats["mean"]),
-                "delta_vs_mspce_main_k": float(mspce_primary["mae"]["mean"] - primary_stats["mae"]["mean"]),
-                "delta_vs_mspce_hard_k": float(mspce_hard["mean"] - hard_stats["mean"]),
-                "delta_vs_mspce_external_k": float(mspce_external["mean"] - external_stats["mean"]),
+                "delta_vs_msce_main_k": float(msce_primary["mae"]["mean"] - primary_stats["mae"]["mean"]),
+                "delta_vs_msce_hard_k": float(msce_hard["mean"] - hard_stats["mean"]),
+                "delta_vs_msce_external_k": float(msce_external["mean"] - external_stats["mean"]),
             }
         )
     return pd.DataFrame(rows)
@@ -708,15 +708,15 @@ def write_markdown(
     )
     (RUN_DIR / "summary_cluster.md").write_text("\n".join(cluster_lines) + "\n", encoding="utf-8")
 
-    rcmf_row = ablation_df.loc[ablation_df["model_name"] == "+MSPCE+RCMF"].iloc[0]
-    masd_row = ablation_df.loc[ablation_df["model_name"] == "+MSPCE+MASD"].iloc[0]
+    rcmf_row = ablation_df.loc[ablation_df["model_name"] == "+MSCE+RCMF"].iloc[0]
+    masd_row = ablation_df.loc[ablation_df["model_name"] == "+MSCE+MASD"].iloc[0]
     full_row = ablation_df.loc[ablation_df["model_name"] == "Full"].iloc[0]
     ablation_lines = [
         "# Ablation summary",
         "",
-        f"- `+MSPCE+RCMF` vs `+MSPCE`: main {float(rcmf_row['delta_vs_mspce_main_k']):+.4f} K, hard {float(rcmf_row['delta_vs_mspce_hard_k']):+.4f} K, external {float(rcmf_row['delta_vs_mspce_external_k']):+.4f} K.",
-        f"- `+MSPCE+MASD` vs `+MSPCE`: main {float(masd_row['delta_vs_mspce_main_k']):+.4f} K, hard {float(masd_row['delta_vs_mspce_hard_k']):+.4f} K, external {float(masd_row['delta_vs_mspce_external_k']):+.4f} K.",
-        f"- `Full` vs `+MSPCE`: main {float(full_row['delta_vs_mspce_main_k']):+.4f} K, hard {float(full_row['delta_vs_mspce_hard_k']):+.4f} K, external {float(full_row['delta_vs_mspce_external_k']):+.4f} K.",
+        f"- `+MSCE+RCMF` vs `+MSCE`: main {float(rcmf_row['delta_vs_msce_main_k']):+.4f} K, hard {float(rcmf_row['delta_vs_msce_hard_k']):+.4f} K, external {float(rcmf_row['delta_vs_msce_external_k']):+.4f} K.",
+        f"- `+MSCE+MASD` vs `+MSCE`: main {float(masd_row['delta_vs_msce_main_k']):+.4f} K, hard {float(masd_row['delta_vs_msce_hard_k']):+.4f} K, external {float(masd_row['delta_vs_msce_external_k']):+.4f} K.",
+        f"- `Full` vs `+MSCE`: main {float(full_row['delta_vs_msce_main_k']):+.4f} K, hard {float(full_row['delta_vs_msce_hard_k']):+.4f} K, external {float(full_row['delta_vs_msce_external_k']):+.4f} K.",
     ]
     (RUN_DIR / "summary_ablation.md").write_text("\n".join(ablation_lines) + "\n", encoding="utf-8")
 
@@ -737,9 +737,9 @@ def write_markdown(
     (RUN_DIR / "summary_best_config.md").write_text("\n".join(best_lines) + "\n", encoding="utf-8")
 
     rcmf_support = "mixed or weak"
-    if float(rcmf_row["delta_vs_mspce_main_k"]) > 0.0 and float(rcmf_row["delta_vs_mspce_external_k"]) > 0.0:
+    if float(rcmf_row["delta_vs_msce_main_k"]) > 0.0 and float(rcmf_row["delta_vs_msce_external_k"]) > 0.0:
         rcmf_support = "supported on main and external"
-    elif float(rcmf_row["delta_vs_mspce_hard_k"]) > 0.0:
+    elif float(rcmf_row["delta_vs_msce_hard_k"]) > 0.0:
         rcmf_support = "main signal weak but hard-case signal present"
     advisor_lines = [
         "# Advisor summary",
@@ -758,7 +758,7 @@ def write_markdown(
 def main() -> int:
     RUN_DIR.mkdir(parents=True, exist_ok=True)
     cache = load_cache()
-    ensure_multiscale_features()
+    ensure_msce_features()
     gpu_payload = masd_run.ensure_gpu()
     dataset, features, splits = load_artifacts()
     masd_run.CHEMISTRY_TAG_LOOKUP = masd_run.build_chemistry_tag_lookup(dataset)
@@ -872,4 +872,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

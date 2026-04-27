@@ -19,7 +19,7 @@ import polymer_tg.scripts.mainline_run as masd_run
 import polymer_tg.scripts.candidate_scan as base_runner
 from train.experiment_overrides import temporary_experiment_overrides
 from train.full_train import diagnostic_config, load_artifacts
-from train.mspce_repair import ensure_multiscale_features
+from train.msce_stage import ensure_msce_features
 
 
 RUN_NAME = "threshold_scan_20260407"
@@ -215,7 +215,7 @@ def write_summary(
 
 def main() -> int:
     RUN_DIR.mkdir(parents=True, exist_ok=True)
-    ensure_multiscale_features()
+    ensure_msce_features()
     masd_run.ensure_gpu()
     dataset, features, splits = load_artifacts()
     masd_run.CHEMISTRY_TAG_LOOKUP = masd_run.build_chemistry_tag_lookup(dataset)
@@ -299,4 +299,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

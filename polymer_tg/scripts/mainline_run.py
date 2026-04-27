@@ -1,6 +1,6 @@
 ﻿from __future__ import annotations
 
-"""Primary experiment driver for the locked MSPCE-RCMF-MASD chain."""
+"""Primary experiment driver for the locked MSCE-RCMF-MASD chain."""
 
 import argparse
 import hashlib
@@ -40,8 +40,8 @@ from train.full_train import (  # noqa: E402
     stable_seed,
     train_standard_model,
 )
-from train.mspce_repair import ensure_multiscale_features, train_repair_student  # noqa: E402
-from train.rcmf_min_repair import train_rcmf_external_focus_student, train_rcmf_student  # noqa: E402
+from train.msce_stage import ensure_msce_features, train_msce_stage  # noqa: E402
+from train.rcmf_stage import train_rcmf_external_focus_stage, train_rcmf_stage  # noqa: E402
 import train.rcmf_min_repair as rcmf_min_repair  # noqa: E402
 
 SMOKE_SEED = 18
@@ -3659,12 +3659,12 @@ def run_mainline_seed(
     selection_policy: str,
     epoch_log: list[float],
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    # This is the seed-wise paper pipeline: baseline -> MSPCE -> RCMF bridge -> full chain.
+    # This is the seed-wise paper pipeline: baseline -> MSCE -> RCMF bridge -> full chain.
     split = ensure_protocol_split(splits, dataset, seed=seed)
     seed_tensors = prepare_seed_tensors(features, split["train"], dataset)
-    baseline_model, mspce_model = train_repair_student(split=split, seed_tensors=seed_tensors, config=config, seed=seed)
-    minimal_rcmf = train_rcmf_student(split=split, seed_tensors=seed_tensors, config=config, seed=seed, repair_model=mspce_model)
-    current_rcmf = train_rcmf_external_focus_student(split=split, seed_tensors=seed_tensors, config=config, seed=seed, minimal_rcmf=minimal_rcmf)
+    baseline_model, msce_model = train_msce_stage(split=split, seed_tensors=seed_tensors, config=config, repeat_id=seed)
+    minimal_rcmf = train_rcmf_stage(split=split, seed_tensors=seed_tensors, config=config, repeat_id=seed, repair_model=msce_model)
+    current_rcmf = train_rcmf_external_focus_stage(split=split, seed_tensors=seed_tensors, config=config, repeat_id=seed, minimal_rcmf=minimal_rcmf)
     masd_model = train_masd_current_student(
         split=split,
         seed_tensors=seed_tensors,
@@ -3680,7 +3680,7 @@ def run_mainline_seed(
     external_loader = make_loader(seed_tensors, split["external"], config.batch_size, shuffle=False)
     stages = [
         ("strongest_baseline", baseline_model),
-        ("strongest_baseline_plus_mspce", mspce_model),
+        ("strongest_baseline_plus_mspce", msce_model),
         ("strongest_baseline_plus_mspce_rcmf", current_rcmf),
         (CURRENT_STAGE_NAME, masd_model),
     ]
@@ -3761,9 +3761,9 @@ def run_mainline_seed_trisoup(
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     split = ensure_protocol_split(splits, dataset, seed=seed)
     seed_tensors = prepare_seed_tensors(features, split["train"], dataset)
-    baseline_model, mspce_model = train_repair_student(split=split, seed_tensors=seed_tensors, config=config, seed=seed)
-    minimal_rcmf = train_rcmf_student(split=split, seed_tensors=seed_tensors, config=config, seed=seed, repair_model=mspce_model)
-    current_rcmf = train_rcmf_external_focus_student(split=split, seed_tensors=seed_tensors, config=config, seed=seed, minimal_rcmf=minimal_rcmf)
+    baseline_model, msce_model = train_msce_stage(split=split, seed_tensors=seed_tensors, config=config, repeat_id=seed)
+    minimal_rcmf = train_rcmf_stage(split=split, seed_tensors=seed_tensors, config=config, repeat_id=seed, repair_model=msce_model)
+    current_rcmf = train_rcmf_external_focus_stage(split=split, seed_tensors=seed_tensors, config=config, repeat_id=seed, minimal_rcmf=minimal_rcmf)
 
     final_model = train_masd_current_student(
         split=split,
@@ -3998,7 +3998,7 @@ def run_mainline_seed_trisoup(
 
     stages = [
         ("strongest_baseline", baseline_model),
-        ("strongest_baseline_plus_mspce", mspce_model),
+        ("strongest_baseline_plus_mspce", msce_model),
         ("strongest_baseline_plus_mspce_rcmf", current_rcmf),
     ]
     rows: list[dict[str, Any]] = []
@@ -4183,9 +4183,9 @@ def run_ablation_seed(
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     split = ensure_protocol_split(splits, dataset, seed=seed)
     seed_tensors = prepare_seed_tensors(features, split["train"], dataset)
-    _baseline_model, mspce_model = train_repair_student(split=split, seed_tensors=seed_tensors, config=config, seed=seed)
-    minimal_rcmf = train_rcmf_student(split=split, seed_tensors=seed_tensors, config=config, seed=seed, repair_model=mspce_model)
-    current_rcmf = train_rcmf_external_focus_student(split=split, seed_tensors=seed_tensors, config=config, seed=seed, minimal_rcmf=minimal_rcmf)
+    _baseline_model, msce_model = train_msce_stage(split=split, seed_tensors=seed_tensors, config=config, repeat_id=seed)
+    minimal_rcmf = train_rcmf_stage(split=split, seed_tensors=seed_tensors, config=config, repeat_id=seed, repair_model=msce_model)
+    current_rcmf = train_rcmf_external_focus_stage(split=split, seed_tensors=seed_tensors, config=config, repeat_id=seed, minimal_rcmf=minimal_rcmf)
     primary_loader = make_loader(seed_tensors, split["test"], config.batch_size, shuffle=False)
     external_loader = make_loader(seed_tensors, split["external"], config.batch_size, shuffle=False)
 
@@ -4347,7 +4347,7 @@ def run_replay_seed(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run locked MSPCE-RCMF-MASD mainline / confirmation workflows.")
+    parser = argparse.ArgumentParser(description="Run locked MSCE-RCMF-MASD mainline / confirmation workflows.")
     parser.add_argument("--run-dir", type=str, required=True)
     parser.add_argument("--output-prefix", type=str, default="masd_final")
     parser.add_argument("--mainline-seeds", type=str, default="10,11,12,13,14,15,16,17,18,19")
@@ -4370,7 +4370,7 @@ def main() -> int:
         USE_EXTERNAL_HOLDOUT_IN_MASD_CHECKPOINT_SELECTION = False
 
     enable_determinism(strict=False)
-    ensure_multiscale_features()
+    ensure_msce_features()
     gpu_payload = ensure_gpu()
     dataset, features, splits = load_artifacts()
     global CHEMISTRY_TAG_LOOKUP
@@ -4685,4 +4685,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

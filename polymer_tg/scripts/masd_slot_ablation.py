@@ -16,8 +16,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from train.full_train import diagnostic_config, load_artifacts, make_loader, prepare_seed_tensors
-from train.mspce_repair import ensure_multiscale_features, train_repair_student
-from train.rcmf_min_repair import train_rcmf_external_focus_student, train_rcmf_student
+from train.msce_stage import ensure_msce_features, train_msce_stage
+from train.rcmf_stage import train_rcmf_external_focus_stage, train_rcmf_stage
 
 from polymer_tg.scripts.mainline_run import (
     CURRENT_MODE,
@@ -63,13 +63,13 @@ def run_slot_ablation_seed(
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     split = ensure_protocol_split(splits, dataset, seed=seed)
     seed_tensors = prepare_seed_tensors(features, split["train"], dataset)
-    _baseline_model, mspce_model = train_repair_student(split=split, seed_tensors=seed_tensors, config=base_config, seed=seed)
-    minimal_rcmf = train_rcmf_student(split=split, seed_tensors=seed_tensors, config=base_config, seed=seed, repair_model=mspce_model)
-    current_rcmf = train_rcmf_external_focus_student(
+    _baseline_model, msce_model = train_msce_stage(split=split, seed_tensors=seed_tensors, config=base_config, repeat_id=seed)
+    minimal_rcmf = train_rcmf_stage(split=split, seed_tensors=seed_tensors, config=base_config, repeat_id=seed, repair_model=msce_model)
+    current_rcmf = train_rcmf_external_focus_stage(
         split=split,
         seed_tensors=seed_tensors,
         config=base_config,
-        seed=seed,
+        repeat_id=seed,
         minimal_rcmf=minimal_rcmf,
     )
     primary_loader = make_loader(seed_tensors, split["test"], base_config.batch_size, shuffle=False)
@@ -163,7 +163,7 @@ def main() -> int:
     args = parser.parse_args()
 
     enable_determinism(strict=False)
-    ensure_multiscale_features()
+    ensure_msce_features()
     gpu_payload = ensure_gpu()
     dataset, features, splits = load_artifacts()
     _ = build_chemistry_tag_lookup(dataset)

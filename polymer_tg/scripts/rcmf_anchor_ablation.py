@@ -24,8 +24,8 @@ if str(ROOT) not in sys.path:
 
 from train.experiment_overrides import clear_experiment_overrides, set_experiment_overrides
 from train.full_train import diagnostic_config, load_artifacts, make_loader, prepare_seed_tensors
-from train.mspce_repair import ensure_multiscale_features, train_repair_student
-from train.rcmf_min_repair import train_rcmf_external_focus_student, train_rcmf_student
+from train.msce_stage import ensure_msce_features, train_msce_stage
+from train.rcmf_stage import train_rcmf_external_focus_stage, train_rcmf_stage
 
 from polymer_tg.scripts.mainline_run import (
     CURRENT_MODE,
@@ -69,15 +69,15 @@ def run_anchor_ablation_seed(
         # Set override BEFORE all build_model calls inside training stages.
         set_experiment_overrides(disable_rcmf_anchor=disable)
 
-        _baseline_model, mspce_model = train_repair_student(
-            split=split, seed_tensors=seed_tensors, config=base_config, seed=seed
+        _baseline_model, msce_model = train_msce_stage(
+            split=split, seed_tensors=seed_tensors, config=base_config, repeat_id=seed
         )
-        minimal_rcmf = train_rcmf_student(
-            split=split, seed_tensors=seed_tensors, config=base_config, seed=seed,
-            repair_model=mspce_model,
+        minimal_rcmf = train_rcmf_stage(
+            split=split, seed_tensors=seed_tensors, config=base_config, repeat_id=seed,
+            repair_model=msce_model,
         )
-        current_rcmf = train_rcmf_external_focus_student(
-            split=split, seed_tensors=seed_tensors, config=base_config, seed=seed,
+        current_rcmf = train_rcmf_external_focus_stage(
+            split=split, seed_tensors=seed_tensors, config=base_config, repeat_id=seed,
             minimal_rcmf=minimal_rcmf,
         )
         model = train_masd_current_student(
@@ -133,7 +133,7 @@ def write_summary(run_dir: Path, rows: list[dict[str, Any]]) -> None:
     lines += [
         "",
         "RCMF anchor enabled = MASD anchors on rcmf_min_pred (full chain).",
-        "RCMF anchor disabled = MASD anchors on mspce_repair_pred (RCMF conditioning bypassed for MASD).",
+        "RCMF anchor disabled = MASD anchors on msce_stage_pred (RCMF conditioning bypassed for MASD).",
     ]
     (run_dir / "rcmf_anchor_ablation_summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("\n".join(lines))
@@ -147,7 +147,7 @@ def main() -> int:
     args = parser.parse_args()
 
     enable_determinism(strict=False)
-    ensure_multiscale_features()
+    ensure_msce_features()
     ensure_gpu()
     dataset, features, splits = load_artifacts()
     _ = build_chemistry_tag_lookup(dataset)

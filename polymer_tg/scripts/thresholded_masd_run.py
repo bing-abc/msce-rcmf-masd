@@ -21,8 +21,8 @@ import polymer_tg.scripts.mainline_run as masd_run
 from polymer_tg.scripts.mainline_eval import paired_stats, reduction_interpretation, summary_stats, summarize_payload_metrics
 from train.experiment_overrides import temporary_experiment_overrides
 from train.full_train import DEVICE, build_model, diagnostic_config, load_artifacts, make_loader, prepare_seed_tensors
-from train.mspce_repair import ensure_multiscale_features, train_repair_student
-from train.rcmf_min_repair import train_rcmf_external_focus_student, train_rcmf_student
+from train.msce_stage import ensure_msce_features, train_msce_stage
+from train.rcmf_stage import train_rcmf_external_focus_stage, train_rcmf_stage
 
 
 RUN_NAME = "thresholded_masd_20260407"
@@ -143,24 +143,24 @@ def ensure_base_seed(
 
     split = masd_run.ensure_protocol_split(splits, dataset, seed=seed)
     seed_tensors = prepare_seed_tensors(features, split["train"], dataset)
-    baseline_model, mspce_model = train_repair_student(
+    baseline_model, msce_model = train_msce_stage(
         split=split,
         seed_tensors=seed_tensors,
         config=config,
-        seed=seed,
+        repeat_id=seed,
     )
-    minimal_rcmf = train_rcmf_student(
+    minimal_rcmf = train_rcmf_stage(
         split=split,
         seed_tensors=seed_tensors,
         config=config,
-        seed=seed,
-        repair_model=mspce_model,
+        repeat_id=seed,
+        repair_model=msce_model,
     )
-    current_rcmf = train_rcmf_external_focus_student(
+    current_rcmf = train_rcmf_external_focus_stage(
         split=split,
         seed_tensors=seed_tensors,
         config=config,
-        seed=seed,
+        repeat_id=seed,
         minimal_rcmf=minimal_rcmf,
     )
     current_full_model = masd_run.train_masd_current_student(
@@ -182,7 +182,7 @@ def ensure_base_seed(
     bundle: dict[str, Any] = {"seed": int(seed)}
     stages = [
         ("strongest_baseline", baseline_model),
-        ("strongest_baseline_plus_mspce", mspce_model),
+        ("strongest_baseline_plus_mspce", msce_model),
         ("strongest_baseline_plus_mspce_rcmf", current_rcmf),
         (masd_run.CURRENT_STAGE_NAME, current_full_model),
     ]
@@ -779,7 +779,7 @@ def write_outputs(
 def main() -> int:
     RUN_DIR.mkdir(parents=True, exist_ok=True)
     cache = load_cache()
-    ensure_multiscale_features()
+    ensure_msce_features()
     masd_run.ensure_gpu()
     dataset, features, splits = load_artifacts()
     masd_run.CHEMISTRY_TAG_LOOKUP = masd_run.build_chemistry_tag_lookup(dataset)
@@ -876,4 +876,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

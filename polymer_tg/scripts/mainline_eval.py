@@ -1,6 +1,6 @@
 ﻿from __future__ import annotations
 
-"""Evaluation and reporting helpers for the locked MSPCE-RCMF-MASD package."""
+"""Evaluation and reporting helpers for the locked MSCE-RCMF-MASD package."""
 
 import argparse
 import hashlib
@@ -1227,8 +1227,8 @@ def evaluate_final_from_tailfix(run_dir: Path, output_prefix: str) -> int:
     final_results.to_csv(DIAG_ROOT / f"{output_prefix}_results.csv", index=False)
 
     claim_rows = [
-        ("mspce_precondition_pass", True, "MSPCE remains the required first stage before RCMF and MASD."),
-        ("rcmf_dependency_on_mspce_pass", True, "RCMF remains valid only under MSPCE-conditioned context."),
+        ("msce_precondition_pass", True, "MSCE remains the required first stage before RCMF and MASD."),
+        ("rcmf_dependency_on_msce_pass", True, "RCMF remains valid only under MSCE-conditioned context."),
         ("masd_mechanism_pass", bool(tailfix_stats["mechanism_pass_tailfix"]), "Contribution sign consistency and mechanism semantics remain valid after the bounded refinement stage."),
         ("masd_performance_pass", bool(tailfix_stats["performance_pass_tailfix"]), "Primary full-data, hardest-slice, and external-supporting remain within the locked thresholds."),
         ("tailfix_replaces_current_locked", tailfix_stats["keep_current_locked_or_replace"] == "REPLACE_WITH_TAILFIX", "The bounded refinement stage improves the prior locked mainline on full-data, hardest-slice, and external supporting."),
@@ -1269,7 +1269,7 @@ def evaluate_final_from_tailfix(run_dir: Path, output_prefix: str) -> int:
         "",
         f"1. The only active mainline is `{CURRENT_STAGE_NAME}`.",
         f"2. The bounded refinement stage replaced `{LEGACY_CURRENT_STAGE_NAME}` because it improved primary full-data, hardest-slice, and external-supporting together without changing the scientific structure.",
-        "3. Scientifically, the project has already passed MSPCE preconditioning, MSPCE-conditioned RCMF, MASD mechanism validity, and locked performance validity on the current thresholds.",
+        "3. Scientifically, the project has already passed MSCE preconditioning, MSCE-conditioned RCMF, MASD mechanism validity, and locked performance validity on the current thresholds.",
         "4. The remaining boundaries that still need conservative wording are: hardest-slice reflects broad stability rather than per-seed unanimous stability, and strict deterministic smoke is not fully satisfied because of cumsum_cuda_kernel even though same-seed replay variance is zero.",
         f"5. The code tree is {'already' if tailfix_stats['code_locked'] else 'not yet'} converged to a long-term maintainable single mainline, with retired archived side routes removed from the active tree.",
         "6. Model-level exploration should now stop. The correct next phase is writing, result table polishing, and paper-facing evidence packaging.",
@@ -1704,7 +1704,7 @@ def evaluate_final_signrate_lock(run_dir: Path, output_prefix: str) -> int:
         f"STATUS: {'PASS' if sci2_locked_for_writing else 'FAIL'}",
         f"GPU_NAME: {mainline_bundle['gpu_payload'].get('gpu_name', 'unknown')}",
         f"USED_GPU_FOR_TRAINING: {bool(mainline_bundle['gpu_payload'].get('gpu_used', False))}",
-        f"FINAL_MAINLINE: strongest_baseline_plus_mspce_rcmf_masd_final",
+        f"FINAL_MAINLINE: baseline_plus_msce_plus_rcmf_plus_masd_final",
         f"OFFLINE_RESELECTION_USED: {False}",
         f"TAIL_SEEDS_RERUN: {bool(rerun_seeds)}",
         f"TAIL_SEEDS_IMPROVED_COUNT: {tail_seeds_improved_count}",
@@ -1976,8 +1976,8 @@ def evaluate_final_conservative_package(output_prefix: str) -> int:
     tailrisk_table.to_csv(package_dir / "final_tailrisk_table.csv", index=False)
 
     claim_rows = [
-        ("mspce_precondition_pass", True, "MSPCE remains the required first stage before RCMF and MASD."),
-        ("rcmf_dependency_on_mspce_pass", True, "RCMF remains valid only under MSPCE-conditioned context."),
+        ("msce_precondition_pass", True, "MSCE remains the required first stage before RCMF and MASD."),
+        ("rcmf_dependency_on_msce_pass", True, "RCMF remains valid only under MSCE-conditioned context."),
         ("masd_mechanism_pass", bool(signrate_stats["mechanism_pass"]), "Contribution sign consistency and mechanism semantics remain valid in the final audited line."),
         ("masd_performance_pass", bool(signrate_stats["performance_pass"]), "Primary full-data, hard subgroup mean, and external supporting mean all remain on the correct side of zero with CI upper bounds <= 0."),
         ("broad_stability", True, "The final line shows broad stability across the expanded seed audit."),
@@ -1992,10 +1992,10 @@ def evaluate_final_conservative_package(output_prefix: str) -> int:
         "# Final Conservative Writing Handoff",
         "",
         "## Fixed Method Narrative",
-        "- The paper mainline is strongest baseline -> MSPCE -> MSPCE + RCMF -> MSPCE + RCMF + MASD(final).",
-        "- MSPCE is written as polymer-segment / multiscale context modeling that identifies important regions.",
-        "- RCMF is written as trustworthy multimodal fusion conditioned on MSPCE context, not as a generic switch or fallback router.",
-        "- MASD is written as a competitive Tg-mechanism decomposition layer operating after MSPCE + RCMF fused representation.",
+        "- The paper mainline is strongest baseline -> MSCE -> MSCE + RCMF -> MSCE + RCMF + MASD(final).",
+        "- MSCE is written as polymer-segment / multiscale context modeling that identifies important regions.",
+        "- RCMF is written as trustworthy multimodal fusion conditioned on MSCE context, not as a generic switch or fallback router.",
+        "- MASD is written as a competitive Tg-mechanism decomposition layer operating after MSCE + RCMF fused representation.",
         "",
         "## Fixed Experimental Narrative",
         "- Use the 20-seed primary audit and 10-seed external-supporting audit as the strict evidence base.",
@@ -2003,8 +2003,8 @@ def evaluate_final_conservative_package(output_prefix: str) -> int:
         "- State that mechanism_pass, performance_pass, and claim-supported-count all pass.",
         "",
         "## Strong Sentences That Can Be Used",
-        "- MSPCE remains the clearest first innovation and is a necessary precondition for RCMF.",
-        "- RCMF remains valid under MSPCE-conditioned context and improves multimodal fusion without redefining the task.",
+        "- MSCE remains the clearest first innovation and is a necessary precondition for RCMF.",
+        "- RCMF remains valid under MSCE-conditioned context and improves multimodal fusion without redefining the task.",
         "- MASD(final) preserves mechanism validity and produces favorable mean-and-CI behavior on primary full-data, hard subgroup, and external supporting.",
         "",
         "## Sentences That Must Stay Conservative",
@@ -2019,7 +2019,7 @@ def evaluate_final_conservative_package(output_prefix: str) -> int:
         "- deterministic caveat note with the exact cumsum_cuda_kernel limitation",
         "",
         "## Do Not Touch After This Package",
-        "- Do not change MSPCE / RCMF / MASD definitions.",
+        "- Do not change MSCE / RCMF / MASD definitions.",
         "- Do not add new model branches, new version scripts, or new training experiments.",
         "- Do not restore retired routes into the active tree.",
     ]
@@ -2265,8 +2265,8 @@ def evaluate_cms_risk_closure(output_prefix: str) -> int:
         "This package is the CMS-facing release skeleton for `main_core_sci2_masd_final`.",
         "",
         "## Fixed Mainline",
-        "- strongest baseline -> +MSPCE -> +MSPCE+RCMF -> +MSPCE+RCMF+MASD(final)",
-        "- MSPCE, RCMF, and MASD definitions are frozen and are not altered by this release package.",
+        "- strongest baseline -> +MSCE -> +MSCE+RCMF -> +MSCE+RCMF+MASD(final)",
+        "- MSCE, RCMF, and MASD definitions are frozen and are not altered by this release package.",
         "",
         "## What This Package Contains",
         "- protocol-clean processed dataset manifest",
@@ -2330,10 +2330,10 @@ def evaluate_cms_risk_closure(output_prefix: str) -> int:
     code_manifest_rows = [
         ("models/backbone.py", "model_core", "baseline backbone", "ready_local_package"),
         ("models/modules.py", "model_core", "shared modules for final mainline", "ready_local_package"),
-        ("models/fusion.py", "model_core", "MSPCE + RCMF + MASD integration", "ready_local_package"),
+        ("models/fusion.py", "model_core", "MSCE + RCMF + MASD integration", "ready_local_package"),
         ("train/full_train.py", "train_core", "main training loop used by the retained final line", "ready_local_package"),
         ("train/calibration.py", "train_core", "calibration utilities used by the final training flow", "ready_local_package"),
-        ("train/mspce_repair.py", "train_core", "MSPCE support logic retained in final tree", "ready_local_package"),
+        ("train/msce_stage.py", "train_core", "MSCE paper-facing wrapper retained in final tree", "ready_local_package"),
         ("train/rcmf_min_repair.py", "train_core", "RCMF support logic retained in final tree", "ready_local_package"),
         ("train/seeds.py", "train_core", "seed utilities for final audit reproducibility", "ready_local_package"),
         ("eval/compare.py", "eval_core", "paired comparisons and audit utilities", "ready_local_package"),
@@ -2643,8 +2643,8 @@ def evaluate_cms_submit_package(output_prefix: str) -> int:
         "This is the CMS submission package for `main_core_sci2_masd_final`.",
         "",
         "## Fixed Scientific Mainline",
-        "- strongest baseline -> +MSPCE -> +MSPCE+RCMF -> +MSPCE+RCMF+MASD(final)",
-        "- MSPCE, RCMF, and MASD definitions are frozen.",
+        "- strongest baseline -> +MSCE -> +MSCE+RCMF -> +MSCE+RCMF+MASD(final)",
+        "- MSCE, RCMF, and MASD definitions are frozen.",
         "",
         "## What Can Be Released",
         "- processed dataset registry (`data/dataset.csv`)",
@@ -2698,10 +2698,10 @@ def evaluate_cms_submit_package(output_prefix: str) -> int:
     code_manifest_rows = [
         ("models/backbone.py", "model_core", "baseline backbone", "planned_public_release"),
         ("models/modules.py", "model_core", "shared modules", "planned_public_release"),
-        ("models/fusion.py", "model_core", "MSPCE + RCMF + MASD final integration", "planned_public_release"),
+        ("models/fusion.py", "model_core", "MSCE + RCMF + MASD final integration", "planned_public_release"),
         ("train/full_train.py", "train_core", "retained training loop", "planned_public_release"),
         ("train/calibration.py", "train_core", "calibration utilities", "planned_public_release"),
-        ("train/mspce_repair.py", "train_core", "MSPCE support path", "planned_public_release"),
+        ("train/msce_stage.py", "train_core", "MSCE paper-facing wrapper", "planned_public_release"),
         ("train/rcmf_min_repair.py", "train_core", "RCMF support path", "planned_public_release"),
         ("train/seeds.py", "train_core", "seed utilities", "planned_public_release"),
         ("eval/compare.py", "eval_core", "comparison utilities", "planned_public_release"),
@@ -2783,7 +2783,7 @@ def evaluate_cms_submit_package(output_prefix: str) -> int:
     (package_dir / "environment_lock.md").write_text("\n".join(environment_lines), encoding="utf-8")
 
     zenodo_template = {
-        "title": "Mechanism-valid multimodal polymer Tg prediction with MSPCE, RCMF, and MASD",
+        "title": "Mechanism-valid multimodal polymer Tg prediction with MSCE, RCMF, and MASD",
         "upload_type": "software",
         "publication_type": "other",
         "description": "Submission-time release package for the main_core_sci2_masd_final code, data manifests, and paper-facing evidence used for a Computational Materials Science submission.",
@@ -2813,7 +2813,7 @@ def evaluate_cms_submit_package(output_prefix: str) -> int:
     checklist_lines = [
         "# CMS Submission Checklist",
         "",
-        "- PASS: final mainline is fixed to strongest baseline -> +MSPCE -> +MSPCE+RCMF -> +MSPCE+RCMF+MASD(final).",
+        "- PASS: final mainline is fixed to strongest baseline -> +MSCE -> +MSCE+RCMF -> +MSCE+RCMF+MASD(final).",
         "- PASS: no new model experiments are needed or recommended.",
         "- PASS: results package contains final summary, stats, claim matrix, and conservative package.",
         "- PASS: cluster transfer table and applicability-domain rules are explicitly documented.",
@@ -2828,7 +2828,7 @@ def evaluate_cms_submit_package(output_prefix: str) -> int:
     abstract_lines = [
         "# CMS Abstract Conservative Draft",
         "",
-        "We present a polymer glass-transition-temperature prediction framework that integrates multiscale polymer-context discovery (MSPCE), MSPCE-conditioned trustworthy multimodal fusion (RCMF), and a mechanism-competitive Tg decomposition layer (MASD).",
+        "We present a polymer glass-transition-temperature prediction framework that integrates multiscale polymer-context discovery (MSCE), MSCE-conditioned trustworthy multimodal fusion (RCMF), and a mechanism-competitive Tg decomposition layer (MASD).",
         "Under a fixed mainline audit, the final model improves the strongest retained baseline on primary full-data, hard subgroup mean behavior, and protocol-clean external supporting evaluation while preserving mechanism validity and performance validity.",
         "Mechanism analysis shows stable contribution signs and competitive mechanism specialization rather than an analysis-only auxiliary head.",
         "External evidence supports transferability in a cluster-dependent manner, with stronger behavior in ether-oxygen, amide, imide-like, and other clusters, but weaker behavior in aromatic-dense and ester-or-carbonate clusters.",
@@ -2842,7 +2842,7 @@ def evaluate_cms_submit_package(output_prefix: str) -> int:
         "",
         "Dear Editor,",
         "",
-        "We submit a computational materials-science manuscript on polymer glass-transition-temperature prediction using a fixed method chain of multiscale polymer-context discovery (MSPCE), trustworthy multimodal fusion conditioned on that context (RCMF), and mechanism-competitive Tg decomposition (MASD).",
+        "We submit a computational materials-science manuscript on polymer glass-transition-temperature prediction using a fixed method chain of multiscale polymer-context discovery (MSCE), trustworthy multimodal fusion conditioned on that context (RCMF), and mechanism-competitive Tg decomposition (MASD).",
         "The work is centered on a computational materials-informatics question rather than an experiment-led study, and it targets polymer organic materials that fall within the scope of Computational Materials Science.",
         "Our central contribution is not a generic accuracy-only deep-learning model, but a mechanism-valid and stability-audited predictive framework in which MASD remains on the prediction path and is supported by mechanism-card and ablation evidence.",
         "The final model improves the retained strongest baseline on primary full-data, hard subgroup mean performance, and protocol-clean external supporting evaluation, while preserving contribution-sign consistency and mechanism validity.",
@@ -2855,7 +2855,7 @@ def evaluate_cms_submit_package(output_prefix: str) -> int:
     (package_dir / "cms_cover_letter.md").write_text("\n".join(cover_letter_lines), encoding="utf-8")
 
     highlights_lines = [
-        "MSPCE, RCMF and MASD form one fixed polymer Tg prediction mainline.",
+        "MSCE, RCMF and MASD form one fixed polymer Tg prediction mainline.",
         "The final line improves full-data, hard-subgroup mean and supporting external metrics.",
         "MASD stays mechanism-valid on the prediction path rather than analysis only.",
         "External transferability is supporting and cluster-dependent, not universal.",
@@ -2867,11 +2867,11 @@ def evaluate_cms_submit_package(output_prefix: str) -> int:
         "# CMS Claim Positioning",
         "",
         "## Strongest Claim",
-        "- The final fixed mainline is a mechanism-valid polymer Tg prediction method that combines MSPCE, RCMF, and MASD, and it improves the strongest retained baseline on primary full-data, hard subgroup mean behavior, and protocol-clean external supporting evaluation.",
+        "- The final fixed mainline is a mechanism-valid polymer Tg prediction method that combines MSCE, RCMF, and MASD, and it improves the strongest retained baseline on primary full-data, hard subgroup mean behavior, and protocol-clean external supporting evaluation.",
         "",
         "## Claims That Are Allowed",
-        "- MSPCE is the required context-discovery stage for the later fusion and mechanism decomposition steps.",
-        "- RCMF operates as trustworthy multimodal fusion under MSPCE-conditioned context rather than as a generic selector.",
+        "- MSCE is the required context-discovery stage for the later fusion and mechanism decomposition steps.",
+        "- RCMF operates as trustworthy multimodal fusion under MSCE-conditioned context rather than as a generic selector.",
         "- MASD contributes to prediction and is supported by mechanism-card and ablation evidence.",
         "- External evidence supports transferability in a cluster-dependent operating region.",
         "",
@@ -3246,7 +3246,7 @@ def evaluate_cms_risk_reduction(output_prefix: str) -> int:
         "This package is the CMS-facing risk-reduction bundle for `main_core_sci2_masd_final`.",
         "",
         "## Fixed mainline",
-        "- strongest baseline -> +MSPCE -> +MSPCE+RCMF -> +MSPCE+RCMF+MASD(final)",
+        "- strongest baseline -> +MSCE -> +MSCE+RCMF -> +MSCE+RCMF+MASD(final)",
         "- No new model training or structural changes are included here.",
         "",
         "## Added non-model safeguards",
@@ -4819,10 +4819,13 @@ def evaluate_final_trisoup_locked(output_prefix: str) -> int:
             report_role = "mainline_stage"
             if model_name == "strongest_baseline":
                 report_role = "baseline"
+                stage_label = "anchor_baseline"
             elif model_name == "strongest_baseline_plus_mspce":
-                report_role = "mspce"
+                report_role = "msce"
+                stage_label = "msce_stage"
             elif model_name == "strongest_baseline_plus_mspce_rcmf":
                 report_role = "rcmf"
+                stage_label = "rcmf_stage"
             elif model_name in CURRENT_STAGE_ALIASES:
                 report_role = "reported_final" if reported_final else "base_single_model_reference"
                 stage_label = configuration_name
@@ -4848,18 +4851,18 @@ def evaluate_final_trisoup_locked(output_prefix: str) -> int:
     main_table = aggregate_stage_rows(
         trisoup_results,
         reported_final=True,
-        configuration_name="strongest_baseline_plus_mspce_rcmf_masd_trisoup_locked",
+        configuration_name="baseline_plus_msce_plus_rcmf_plus_masd_trisoup_locked",
     )
     base_reference_row = aggregate_stage_rows(
         base_results,
         reported_final=False,
-        configuration_name="strongest_baseline_plus_mspce_rcmf_masd_base_single_model",
+        configuration_name="baseline_plus_msce_plus_rcmf_plus_masd_base_single_model",
     )
     base_reference_row = base_reference_row[base_reference_row["report_role"] == "base_single_model_reference"]
     final_main_table = pd.concat([main_table, base_reference_row], ignore_index=True, sort=False)
     role_order = {
         "baseline": 0,
-        "mspce": 1,
+        "msce": 1,
         "rcmf": 2,
         "base_single_model_reference": 3,
         "reported_final": 4,
@@ -4978,15 +4981,15 @@ def evaluate_final_trisoup_locked(output_prefix: str) -> int:
 
     final_claim_rows = [
         {
-            "claim_name": "mspce_precondition_pass",
+            "claim_name": "msce_precondition_pass",
             "supported": True,
-            "evidence": "MSPCE remains the first stage before RCMF and MASD across the frozen mainline.",
+            "evidence": "MSCE remains the first stage before RCMF and MASD across the frozen mainline.",
             "writing_scope": "strong",
         },
         {
-            "claim_name": "rcmf_dependency_on_mspce_pass",
+            "claim_name": "rcmf_dependency_on_msce_pass",
             "supported": True,
-            "evidence": "RCMF remains valid only under MSPCE-conditioned context.",
+            "evidence": "RCMF remains valid only under MSCE-conditioned context.",
             "writing_scope": "strong",
         },
         {
@@ -5009,7 +5012,7 @@ def evaluate_final_trisoup_locked(output_prefix: str) -> int:
         {
             "claim_name": "trisoup_not_fourth_innovation",
             "supported": True,
-            "evidence": "trisoup is a reported inference stabilization protocol layered on the frozen MSPCE/RCMF/MASD mainline, not a new scientific contribution.",
+            "evidence": "trisoup is a reported inference stabilization protocol layered on the frozen MSCE/RCMF/MASD mainline, not a new scientific contribution.",
             "writing_scope": "strict_boundary",
         },
         {
@@ -5034,8 +5037,8 @@ def evaluate_final_trisoup_locked(output_prefix: str) -> int:
     pd.DataFrame(final_claim_rows).to_csv(package_dir / "final_claim_matrix.csv", index=False)
 
     abstract_lines = [
-        "We present a polymer glass-transition prediction framework that keeps the scientific mainline fixed as strongest baseline -> MSPCE -> RCMF -> MASD, while using constrained trisoup only as the reported final inference protocol rather than as a new innovation.",
-        "MSPCE provides polymer-chain and multiscale context selection, RCMF performs trustworthy multimodal fusion under that context, and MASD decomposes the fused representation into competitive Tg-relevant mechanisms.",
+        "We present a polymer glass-transition prediction framework that keeps the scientific mainline fixed as strongest baseline -> MSCE -> RCMF -> MASD, while using constrained trisoup only as the reported final inference protocol rather than as a new innovation.",
+        "MSCE provides polymer-chain and multiscale context selection, RCMF performs trustworthy multimodal fusion under that context, and MASD decomposes the fused representation into competitive Tg-relevant mechanisms.",
         "Under the reported trisoup configuration, the method achieves consistent gains on primary full-data, hard subgroup, and supporting external evaluation, with primary delta -0.1462 K, hard-subgroup delta -4.3332 K, and external-supporting delta -0.1108 K.",
         "The same reported configuration also reduces the hardest-slice positive seed rate to 0.10 and keeps the weakest weak-cluster inside the guardrail at -0.2119 K.",
         "Mechanism validity remains intact, but transferability must still be described as supporting and cluster-dependent rather than universal strong generalization.",
@@ -5047,7 +5050,7 @@ def evaluate_final_trisoup_locked(output_prefix: str) -> int:
         "",
         "Dear Editor,",
         "",
-        "We submit a computational materials-informatics study on polymer glass-transition prediction built around a fixed three-step methodological mainline: MSPCE for polymer-chain / multiscale context selection, RCMF for MSPCE-conditioned trustworthy multimodal fusion, and MASD for mechanism-competitive Tg decomposition.",
+        "We submit a computational materials-informatics study on polymer glass-transition prediction built around a fixed three-step methodological mainline: MSCE for polymer-chain / multiscale context selection, RCMF for MSCE-conditioned trustworthy multimodal fusion, and MASD for mechanism-competitive Tg decomposition.",
         "The reported final configuration is a constrained trisoup inference protocol applied on top of the frozen mainline. It is reported as the final inference configuration because it improves the existing final model on primary full-data, hard subgroup, external supporting evaluation, hardest-slice sign-rate, and weakest weak-cluster simultaneously.",
         "The strongest supported claim is therefore a mechanism-valid mainline with stabilized final inference that yields consistent gains on primary full-data, hard subgroup, and supporting external evaluation under a fixed protocol. We explicitly avoid universal strong-generalization language and keep external conclusions cluster-dependent.",
         "We believe this positioning fits Computational Materials Science as a materials-informatics methodology paper focused on polymer prediction, mechanistic decomposition, and protocol-aware stability.",
@@ -5058,7 +5061,7 @@ def evaluate_final_trisoup_locked(output_prefix: str) -> int:
     (package_dir / "final_cover_letter.md").write_text("\n".join(cover_lines), encoding="utf-8")
 
     highlights = [
-        "MSPCE, RCMF, and MASD remain the only three scientific innovations.",
+        "MSCE, RCMF, and MASD remain the only three scientific innovations.",
         "Constrained trisoup is the reported final inference configuration layered on top of the frozen mainline.",
         "Reported final gains hold on primary full-data, hard subgroup, and supporting external evaluation.",
         "Hardest-slice positive seed rate drops to 0.10 and the weakest weak-cluster stays inside guardrail.",
@@ -5070,8 +5073,8 @@ def evaluate_final_trisoup_locked(output_prefix: str) -> int:
         "# Final Trisoup Locked Summary",
         "",
         "1. This round is a real result-level improvement because constrained trisoup replaces the single-model final only after a completed full reconfirmation in which primary full-data, hard subgroup, external supporting, hardest-slice sign-rate, and weakest weak-cluster all improved together.",
-        "2. trisoup replaces the single-model final because it finds a better trade-off inside the frozen result space without changing MSPCE, RCMF, or MASD themselves.",
-        "3. The scientific mainline is still exactly MSPCE / RCMF / MASD. Trisoup and interpolation are frozen inference/reporting settings layered on top of that mainline.",
+        "2. trisoup replaces the single-model final because it finds a better trade-off inside the frozen result space without changing MSCE, RCMF, or MASD themselves.",
+        "3. The scientific mainline is still exactly MSCE / RCMF / MASD. Trisoup and interpolation are frozen inference/reporting settings layered on top of that mainline.",
         "4. Training should now stop because the fixed-structure trade-off search has already converged to a reported final configuration that passes the target guardrails.",
         "5. The project now reaches a more stable SCI2 level under the frozen structure, with hardest positive seed rate 0.10 and weakest weak-cluster inside the guardrail.",
         "6. For CMS-facing writing, the strongest claim should be: mechanism-valid mainline with stabilized final inference achieves consistent gains on primary full-data, hard subgroup, and supporting external evaluation.",
@@ -5138,13 +5141,13 @@ def evaluate_final_trisoup_100run(run_dir: Path, output_prefix: str) -> int:
         if fixed_weights:
             assumption_text = (
                 f"This 100-run reconfirmation used one globally fixed trisoup weight ({weight_key(tuple(fixed_weights))}) "
-                f"in {fixed_mode or 'weight'} mode, selected from the existing endpoint family without changing MSPCE/RCMF/MASD structure, "
+                f"in {fixed_mode or 'weight'} mode, selected from the existing endpoint family without changing MSCE/RCMF/MASD structure, "
                 f"loss definitions, or split protocol.{scan_seed_note}"
             )
         else:
             assumption_text = (
                 "This 100-run reconfirmation used one globally fixed trisoup weight selected from the existing endpoint family "
-                f"without changing MSPCE/RCMF/MASD structure, loss definitions, or split protocol.{scan_seed_note}"
+                f"without changing MSCE/RCMF/MASD structure, loss definitions, or split protocol.{scan_seed_note}"
             )
     elif output_prefix == TRISOUP_100RUN_PREFIX:
         reported_configuration = "main_core_sci2_masd_final_trisoup_locked"
@@ -5152,13 +5155,13 @@ def evaluate_final_trisoup_100run(run_dir: Path, output_prefix: str) -> int:
         assumption_text = (
             "The locked package does not preserve a single global trisoup coefficient file. "
             "This 100-run reconfirmation therefore reuses the frozen trisoup selection grid and criteria already defined in mainline_run.py, "
-            "without changing MSPCE/RCMF/MASD structure, loss definitions, or split protocol."
+            "without changing MSCE/RCMF/MASD structure, loss definitions, or split protocol."
         )
     else:
         reported_configuration = output_prefix
         reported_method_name = output_prefix
         assumption_text = (
-            "This reconfirmation keeps the MSPCE/RCMF/MASD mainline frozen while using validation-only trisoup candidate selection. "
+            "This reconfirmation keeps the MSCE/RCMF/MASD mainline frozen while using validation-only trisoup candidate selection. "
             "The external holdout is excluded from checkpoint and soup selection and is used only for final reporting."
         )
 
@@ -5434,7 +5437,7 @@ def evaluate_final_trisoup_100run(run_dir: Path, output_prefix: str) -> int:
         "",
         "Below, each `*_95CI` field reports the 95% confidence interval of the corresponding `MAE reduction (K)`.",
         "",
-        f"1. This 100-run reconfirmation was completed under the fixed scientific mainline and the frozen final reporting configuration. No MSPCE/RCMF/MASD definition, model structure, loss definition, split rule, or new training protocol was introduced. {assumption_text}",
+        f"1. This 100-run reconfirmation was completed under the fixed scientific mainline and the frozen final reporting configuration. No MSCE/RCMF/MASD definition, model structure, loss definition, split rule, or new training protocol was introduced. {assumption_text}",
         f"2. On the main test set, the strongest baseline reached MAE {float(baseline_main['mae']['mean']):.4f} K, RMSE {float(baseline_main['rmse']['mean']):.4f} K, Pearson {float(baseline_main['pearson']['mean']):.4f}; the final reported configuration reached MAE {float(final_main['mae']['mean']):.4f} K, RMSE {float(final_main['rmse']['mean']):.4f} K, Pearson {float(final_main['pearson']['mean']):.4f}.",
         f"3. Relative to the strongest baseline, the final reported configuration achieved MAE reduction of {float(primary_reduction['mean']):.4f} K on the main test set, {float(hard_reduction['mean']):.4f} K on the hard subgroup, and {float(external_reduction['mean']):.4f} K on the external holdout.",
         f"4. Stable improvement across the main test set, hard subgroup, and external holdout is {'maintained' if all_split_improved else 'not fully maintained'} under the 100-run review. The corresponding MAE-reduction 95% CIs are {fmt_ci(float(primary_reduction['ci95_low']), float(primary_reduction['ci95_high']))}, {fmt_ci(float(hard_reduction['ci95_low']), float(hard_reduction['ci95_high']))}, and {fmt_ci(float(external_reduction['ci95_low']), float(external_reduction['ci95_high']))}.",
@@ -5831,7 +5834,7 @@ def evaluate_tailfix(run_dir: Path, output_prefix: str) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Evaluate and export locked MSPCE-RCMF-MASD evidence.")
+    parser = argparse.ArgumentParser(description="Evaluate and export locked MSCE-RCMF-MASD evidence.")
     parser.add_argument("--run-dir", type=str, required=True)
     parser.add_argument("--output-prefix", type=str, default="masd_final")
     parser.add_argument("--compare-run-dirs", type=str, default="")
@@ -5900,7 +5903,7 @@ def main() -> int:
 
     full_rows = mainline_df[mainline_df["model_name"] == CURRENT_STAGE_NAME].sort_values("seed")
     rcmf_rows = mainline_df[mainline_df["model_name"] == "strongest_baseline_plus_mspce_rcmf"].sort_values("seed")
-    mspce_rows = mainline_df[mainline_df["model_name"] == "strongest_baseline_plus_mspce"].sort_values("seed")
+    msce_rows = mainline_df[mainline_df["model_name"] == "strongest_baseline_plus_mspce"].sort_values("seed")
     baseline_rows = mainline_df[mainline_df["model_name"] == "strongest_baseline"].sort_values("seed")
 
     no_masd = ablation_df[ablation_df["model_name"] == "no_masd"].sort_values("seed")
@@ -5910,14 +5913,14 @@ def main() -> int:
     hard_gain = float((full_ablation["primary_hard_subgroup"].to_numpy() - no_masd["primary_hard_subgroup"].to_numpy()).mean())
     external_gain = float((full_ablation["external_holdout"].to_numpy() - no_masd["external_holdout"].to_numpy()).mean())
 
-    mspce_improve_clean = (mspce_rows["primary_clean"].to_numpy() - baseline_rows["primary_clean"].to_numpy())
-    mspce_improve_noisy = (mspce_rows["primary_noisy"].to_numpy() - baseline_rows["primary_noisy"].to_numpy())
-    rcmf_improve_clean = (rcmf_rows["primary_clean"].to_numpy() - mspce_rows["primary_clean"].to_numpy())
-    rcmf_improve_noisy = (rcmf_rows["primary_noisy"].to_numpy() - mspce_rows["primary_noisy"].to_numpy())
-    rcmf_improve_external = (rcmf_rows["external_holdout"].to_numpy() - mspce_rows["external_holdout"].to_numpy())
-    mspce_precondition_pass = bool(
-        float(np.mean(mspce_improve_clean <= PRIMARY_CLEAN_PASS_DELTA)) >= 0.90
-        and float(np.mean(mspce_improve_noisy <= PRIMARY_NOISY_PASS_DELTA)) >= 0.90
+    msce_improve_clean = (msce_rows["primary_clean"].to_numpy() - baseline_rows["primary_clean"].to_numpy())
+    msce_improve_noisy = (msce_rows["primary_noisy"].to_numpy() - baseline_rows["primary_noisy"].to_numpy())
+    rcmf_improve_clean = (rcmf_rows["primary_clean"].to_numpy() - msce_rows["primary_clean"].to_numpy())
+    rcmf_improve_noisy = (rcmf_rows["primary_noisy"].to_numpy() - msce_rows["primary_noisy"].to_numpy())
+    rcmf_improve_external = (rcmf_rows["external_holdout"].to_numpy() - msce_rows["external_holdout"].to_numpy())
+    msce_precondition_pass = bool(
+        float(np.mean(msce_improve_clean <= PRIMARY_CLEAN_PASS_DELTA)) >= 0.90
+        and float(np.mean(msce_improve_noisy <= PRIMARY_NOISY_PASS_DELTA)) >= 0.90
     )
     rcmf_dependency_pass = bool(
         float(np.mean(rcmf_improve_clean <= PRIMARY_CLEAN_PASS_DELTA)) >= 0.90
@@ -5940,8 +5943,8 @@ def main() -> int:
     )
     code_locked = bool(main_bundle.get("locked_snapshot")) and output_prefix == "masd_current_confirm"
     claim_rows = [
-        ("mspce_precondition_pass", mspce_precondition_pass, "MSPCE remains the preconditioned first step over 10 seeds."),
-        ("rcmf_dependency_on_mspce_pass", rcmf_dependency_pass, "RCMF remains stable under MSPCE context over 10 seeds."),
+        ("msce_precondition_pass", msce_precondition_pass, "MSCE remains the preconditioned first step over 10 seeds."),
+        ("rcmf_dependency_on_msce_pass", rcmf_dependency_pass, "RCMF remains stable under MSCE context over 10 seeds."),
         ("mechanism_pass", bool(mechanism_row["mechanism_pass"]), "Contribution sign consistency and contribution-level alignment remain valid."),
         ("performance_pass", performance_pass, "10-seed primary and 5-seed external supporting remain within locked thresholds."),
         ("hard_sign_consistency_pass", hard_sign_consistency_pass, "Hardest-slice sign consistency across seeds stays acceptable."),
@@ -5952,7 +5955,7 @@ def main() -> int:
     claim_df.to_csv(DIAG_ROOT / f"{output_prefix}_claim_matrix.csv", index=False)
     claim_supported_count = int(claim_df["supported"].sum())
     claim_unsupported_count = int((~claim_df["supported"]).sum())
-    masd_ready = bool(code_locked and mspce_precondition_pass and rcmf_dependency_pass and bool(mechanism_row["mechanism_pass"]) and performance_pass)
+    masd_ready = bool(code_locked and msce_precondition_pass and rcmf_dependency_pass and bool(mechanism_row["mechanism_pass"]) and performance_pass)
 
     stats_payload = {
         "gpu_payload": main_bundle["gpu_payload"],
@@ -5996,7 +5999,7 @@ def main() -> int:
         f"2. The remaining hardest-slice residual risk is seed-level rather than definition-level. On the expanded 10-seed tranche the worst positive hardest-slice rebound was {residual_risk:+.4f} K, while the mean hardest-slice delta was {float(summary_metrics['hard_subgroup_delta']):+.4f} K.",
         f"3. After expanding to 10 primary seeds and 5 external-supporting seeds, the current line {'still holds' if masd_ready else 'does not hold cleanly enough'} under the locked thresholds.",
         f"4. The third innovation can {'be written into the paper mainline as closed-loop' if masd_ready else 'only be written as conditionally closed-loop with explicit seed-level hardest-slice caveats'}.",
-        "5. Strong wording that can stay: signed competitive mechanism semantics, MSPCE-conditioned RCMF mainline, and MASD mechanism validity. Wording that must stay conservative: hardest-slice stability is improved and broadly stable, but not perfectly uniform across every seed.",
+        "5. Strong wording that can stay: signed competitive mechanism semantics, MSCE-conditioned RCMF mainline, and MASD mechanism validity. Wording that must stay conservative: hardest-slice stability is improved and broadly stable, but not perfectly uniform across every seed.",
         f"6. The code tree is {'now locked to a maintainable current branch with no new version scripts' if code_locked else 'not yet fully locked at the evidence level'}.",
         "",
         f"STATUS: {'PASS' if masd_ready else 'FAIL'}",
