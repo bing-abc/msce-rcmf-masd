@@ -4,13 +4,13 @@ Public repository name: `msce-rcmf-masd`
 
 This repository contains the code for the paper:
 
-> **Selective Multimodal Regression with Multiscale Context Encoding, Reliability-Conditioned Multimodal Fusion, and Signed Decomposition**
+> **Selective Multimodal Regression under Heterogeneous Branch Reliability for Polymer Glass-Transition Temperature Prediction**
 
 The method is a three-stage selective multimodal regression chain:
 
 - `MSCE`: multiscale context encoding
 - `RCMF`: reliability-conditioned multimodal fusion
-- `MASD`: bounded signed correction focused on difficult samples
+- `MASD`: capped signed correction focused on the hard subgroup
 
 The evaluation domain is polymer glass-transition temperature (`T_g`) prediction, but the paper is positioned as a pattern-recognition methodology study about uneven branch reliability in multimodal regression.
 
@@ -50,6 +50,17 @@ The local workspace also contains manuscript and packaging assets under `outputs
 ## Important naming note
 
 The manuscript now uses the term `MSCE` ("Multiscale Context Encoding"). Some code files still contain the older `mspce` token in filenames for continuity with the internal experiment history. The paper-facing method definition is the same chain described in the manuscript.
+
+For paper-facing entry points, prefer the clean wrapper interfaces:
+
+- [train/msce_stage.py](./train/msce_stage.py)
+- [train/rcmf_stage.py](./train/rcmf_stage.py)
+- [train/seed_semantics.py](./train/seed_semantics.py)
+
+These wrappers preserve legacy behavior while exposing `MSCE`, `RCMF`, and
+repeat-id semantics explicitly. The older `mspce_*` and `teacher/student`
+tokens remain in the legacy internals for checkpoint compatibility and should
+not be treated as the manuscript terminology.
 
 ## Environment
 
@@ -112,7 +123,7 @@ Those files are rebuildable and are ignored by default for public GitHub upload.
 
 ### Paper-supporting controls
 
-- [train/curriculum_controlled_baseline.py](./train/curriculum_controlled_baseline.py): tests whether hard-sample curriculum alone can reproduce the difficult-sample gain
+- [train/curriculum_controlled_baseline.py](./train/curriculum_controlled_baseline.py): tests whether hard-subgroup curriculum alone can reproduce the hard-subgroup gain
 - [train/polybert_baseline.py](./train/polybert_baseline.py): same-protocol polyBERT baseline probe
 
 ## Canonical reproduction path

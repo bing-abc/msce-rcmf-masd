@@ -17,6 +17,14 @@ Place the raw public source files under `data/raw/` with the following filenames
 - `mendeley_non_grea_tg383.csv`
 - `step250_trackB_experimental_only.csv`
 
+In the manuscript, these correspond to:
+
+- the PolyMetriX-derived main source
+- the Mendeley supplement
+- the `Bicerano_bigsmiles.csv` external benchmark source used as the fixed external holdout
+
+The local raw filename `step250_trackB_experimental_only.csv` is retained here for script compatibility; it is the repository-side filename expected by the current dataset builder for the external benchmark source.
+
 The builder in [dedup.py](./dedup.py) looks for these local files first. For backward compatibility it can still fall back to the older sibling-workspace paths if they exist locally, but public GitHub use should rely on `data/raw/`.
 
 ## Generated artifacts
