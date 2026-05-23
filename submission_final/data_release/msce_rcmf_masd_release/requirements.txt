@@ -1,0 +1,12 @@
+# Paper-facing environment used for the public code release.
+# Install the matching CUDA build of PyTorch separately if needed.
+# RDKit may be easier to install through conda-forge on some platforms.
+
+numpy==1.26.4
+pandas==2.1.4
+scipy==1.11.4
+scikit-learn==1.2.2
+matplotlib==3.8.4
+torch==2.5.1
+torch-geometric==2.7.0
+rdkit==2022.09.5

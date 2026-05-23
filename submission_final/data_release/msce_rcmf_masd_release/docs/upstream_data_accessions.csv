@@ -1,0 +1,4 @@
+source_name,local_expected_filename,accession_or_doi,role_in_study,redistribution_note
+PolyMetriX curated polymer Tg ecosystem,polymetrix_tg.csv,10.5281/zenodo.14980914,primary in-domain registry source,not redistributed in full; use upstream accession
+Liu Mendeley polymer Tg supplement,mendeley_non_grea_tg383.csv,10.17632/385nsgjvkm.1,supplemental in-domain registry source,not redistributed in full; use upstream accession
+Choi BigSMILES external benchmark package,step250_trackB_experimental_only.csv,10.6084/m9.figshare.c.6858337.v1,fixed external holdout source,not redistributed in full; use upstream accession

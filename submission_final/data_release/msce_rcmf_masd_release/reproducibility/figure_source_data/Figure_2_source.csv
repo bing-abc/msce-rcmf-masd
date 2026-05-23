@@ -1,0 +1,10 @@
+panel,method,mean,ci_low,ci_high,n_runs,subset,delta_vs_baseline_k
+primary_mae,Strongest baseline,24.6678,24.4986,24.837,100.0,,
+primary_mae,polyBERT audit,24.462737731083525,23.236069338462055,25.689406123704995,5.0,,
+primary_mae,Proposed,23.9814,23.8229,24.1399,100.0,,
+hard_mae,Strongest baseline,29.3758,28.6792,30.0724,100.0,,
+hard_mae,Proposed,25.1516,24.3393,25.9639,100.0,,
+delta_mae,polyBERT audit,,,,,Primary test,0.20506226891647472
+delta_mae,Proposed,,,,,Primary test,0.686399999999999
+delta_mae,polyBERT audit,,,,,External holdout,0.7661750186743284
+delta_mae,Proposed,,,,,External holdout,0.40390000000000015

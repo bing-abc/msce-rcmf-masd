@@ -1,0 +1,340 @@
+\documentclass[review,12pt]{elsarticle}
+
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{lineno}
+\usepackage{multirow}
+\usepackage{newtxtext,newtxmath}
+\usepackage[font=footnotesize]{caption}
+\usepackage{float}
+\usepackage{xurl}
+
+\graphicspath{{figures/}{../figures/}}
+\Urlmuskip=0mu plus 1mu\relax
+
+\hypersetup{
+  hidelinks,
+  pdftitle={Multimodal Molecular Representation Learning for Polymer Glass Transition Temperature Prediction},
+  pdfauthor={Songjiang Li, Bing Zhu, Yujie Feng, Yapeng Diao, Wenzhuo Jia, Xuan Fang, XiaoWan Gu, Peng Wang}
+}
+\pdfstringdefDisableCommands{
+  \def\corref#1{}
+  \def\fnref#1{}
+}
+
+\journal{Materials \& Design}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Multimodal Molecular Representation Learning for Polymer Glass Transition Temperature Prediction}
+
+\author[inst1]{Songjiang Li}
+\author[inst1]{Bing Zhu}
+\author[inst1]{Yujie Feng}
+\author[inst2]{Yapeng Diao}
+\author[inst1]{Wenzhuo Jia}
+\author[inst3]{Xuan Fang}
+\author[inst1]{XiaoWan Gu}
+\author[inst1]{Peng Wang\corref{cor1}}
+\ead{wangpeng@cust.edu.cn}
+\cortext[cor1]{Corresponding author: Peng Wang.}
+
+\address[inst1]{School of Computer Science and Technology, Changchun University of Science and Technology, Changchun 130022, China}
+\address[inst2]{School of Materials Science and Engineering, Changchun University of Science and Technology, Changchun 130022, China}
+\address[inst3]{State Key Laboratory of High Power Semiconductor Lasers, School of Physics, Changchun University of Science and Technology, Changchun 130022, China}
+
+\begin{abstract}
+Polymer glass transition temperature ($T_g$) prediction is a structure--property problem with direct relevance to data-driven polymer design. We present a multimodal molecular representation learning framework that integrates graph, descriptor, and chain-context views for polymer $T_g$ regression. Relative to the strongest multimodal baseline, the proposed model reduced primary-test MAE from 24.67 to 23.98 K across 100 frozen runs, indicating a moderate but statistically reliable average-case improvement. The main benefit appeared on a fixed hard subgroup defined independently from the proposed model using the baseline error mask, where MAE decreased from 29.38 to 25.15 K. A same-split polyBERT audit remained competitive on average but showed different difficult-subset behavior, suggesting that the framework mainly improves error-tail behavior rather than achieving uniform superiority. On an external holdout, the model maintained competitive performance and showed bounded improvement over the strongest multimodal baseline under moderate chemistry-space shift. Structure-level analysis associated the strongest gains with aromatic-rich and ether-oxygen families. These results support multimodal representation learning as a useful but bounded tool for polymer $T_g$ screening.
+\end{abstract}
+
+\begin{keyword}
+polymer informatics \sep glass transition temperature \sep multimodal learning \sep molecular representation \sep difficult polymers \sep materials design \sep structure--property relationship
+\end{keyword}
+
+\end{frontmatter}
+
+\section{Introduction}
+
+Glass transition temperature ($T_g$) is a central polymer property because it governs the temperature range over which chain mobility, stiffness, dimensional stability, and processability change markedly \cite{tao2021benchmarking,xie2020glass}. As a result, $T_g$ strongly influences the selection and design of polymers for coatings, membranes, structural components, electronics, fibers, and other engineering applications \cite{audus2017polymer,tao2021benchmarking}. Reliable $T_g$ prediction is therefore a practical structure--property task in data-driven polymer design rather than only a benchmark regression problem.
+
+This framing is consistent with the broader rise of materials informatics and AI-assisted materials design, where curated datasets, structure-aware models, and realistic evaluation protocols are used to accelerate screening rather than replace materials judgment \cite{ramprasad2017materialsinformatics,butler2018machinelearning,geurts2019datadriven,chen2021currentstatus,morand2024structureguided}.
+
+Accurate $T_g$ prediction remains difficult because polymer behavior depends on multiple interacting structural factors, including chain rigidity, aromaticity, heteroatom content, side-chain flexibility, intermolecular interactions, and free-volume-related packing effects \cite{xie2020glass,park2022prediction,white2016freevolume}. These effects are further complicated by experimental noise, non-uniform reporting conditions, sparse coverage of certain polymer families, and chemical diversity across available datasets \cite{tao2021benchmarking,tang2025assessing,heid2023characterizing}. In practice, models that perform reasonably well on average may still fail on the difficult polymers that matter most during design screening.
+
+Polymer informatics has increasingly adopted molecular machine learning methods ranging from descriptor-based regression to graph neural networks and pretrained sequence models \cite{audus2017polymer,tao2021benchmarking,park2022prediction,antoniuk2022representing,kuenneth2023polybert,han2024multimodal,xu2023transpolymer}. Recent reviews have also emphasized that descriptor choice, data curation, and polymer-specific representation design remain as important as architecture class for useful property prediction \cite{chen2021currentstatus,zhao2023descriptorreview}. Descriptor models often encode chemically meaningful heuristics efficiently, graph models can capture local connectivity patterns, and sequence-based models can exploit large-scale pretraining on SMILES-like inputs \cite{park2022prediction,antoniuk2022representing,kuenneth2023polybert}. Related molecular representation studies have also explored graph attention, contrastive learning, graph-transformer pretraining, geometry-aware pretraining, and chemical language models \cite{xiong2020pushing,wang2022molclr,rong2020selfsupervised,liu2022pretraining3d,chithrananda2020chemberta}. However, no single representation is expected to be uniformly reliable across all polymer families and $T_g$ regimes.
+
+This motivates multimodal learning, where graph, descriptor, and chain-related representations are combined to improve coverage of chemically heterogeneous polymers \cite{baltrusaitis2019multimodal,rollins2024molprop,han2024multimodal}. Related multimodal molecular-property studies have also explored graph-contrastive fusion for chemically structured data \cite{gong2025mdfcl}. Yet naive multimodal fusion has a limitation: different branches are not equally trustworthy for every polymer. A descriptor branch may remain informative for one family while a graph branch is more useful for another, and conflict between modalities can become more severe under sparse chemistry coverage or partial distribution shift. In this setting, averaging modalities without considering their sample-specific reliability can obscure rather than resolve the underlying structure--property signal \cite{neverova2016moddrop,zhang2023provable,gao2024embracing}.
+
+Related literature on uncertainty, calibration, applicability-domain estimation, selective prediction, and subgroup-sensitive evaluation further motivates testing difficult slices rather than relying on a single aggregate metric. Broader studies on uncertainty and calibration \cite{abdar2021uncertainty,guo2017calibration}, applicability-domain analysis \cite{jaworska2005applicability}, and subgroup-sensitive evaluation \cite{geifman2019selectivenet,sagawa2020groupshift} reinforce this point. For polymer screening, this perspective is especially relevant. Chemistry heterogeneity and measurement noise can concentrate error in a small but design-critical subset of samples.
+
+The present work addresses this problem with a multimodal molecular representation framework for polymer $T_g$ prediction that treats reliability as a diagnostic conditioning signal rather than as a separate accuracy claim. The framework combines multiscale context encoding, mechanism-aware correction, and a bounded reliability-informed diagnostic path while keeping model selection strictly limited to train/validation information. Rather than judging the method only by average test error, we also evaluate it on a fixed hard subgroup defined independently from the proposed model and on an external holdout that probes model behavior under moderate chemistry-space shift.
+
+The contributions of this study are as follows:
+\begin{itemize}
+  \item A multimodal molecular representation framework for polymer $T_g$ prediction that integrates graph, descriptor, and chain-context information with mechanism-aware correction; reliability diagnostics are retained as auxiliary analysis.
+  \item A fixed, baseline-defined hard subgroup protocol for evaluating difficult polymers without post hoc selection bias.
+  \item A statistically reliable primary-set improvement together with a much larger hard-subgroup improvement.
+  \item An external holdout analysis under moderate chemistry-space shift, framed as bounded support rather than as broad out-of-domain transferability.
+  \item A materials-design discussion that links difficult-sample correction to polymer structure--property modeling and explicitly discloses chemistry families without stable improvement.
+\end{itemize}
+
+\section{Materials and Methods}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.98\linewidth]{Figure_1.pdf}
+  \caption{Workflow of the study. Curated polymer data are converted into graph, descriptor, and chain-context molecular views, processed by MSCE, a bounded diagnostic conditioning path, and MASD correction, and then evaluated on the primary test set, a fixed hard subgroup, and an external holdout. The final panel summarizes retrospective structure--property interpretation and design-oriented screening implications rather than de novo material discovery.}
+  \label{fig:workflow}
+\end{figure}
+
+\subsection{Dataset curation and split protocol}
+
+The primary evaluation pool comprised 7,563 experimental polymer entries and was partitioned into 5,409 training, 1,077 validation, and 1,077 test samples (Table~\ref{tab:dataset_protocol}). An additional supplemental training set of 383 polymers was used only during training, and an external holdout of 302 experimental polymers from a distinct source was reserved for frozen-model evaluation only. The source registry harmonized a PolyMetriX-derived public experimental pool, a Mendeley Data supplement, and a BigSMILES-based external benchmark \cite{kunchapu2025polymetrix,liu2023mendeleytg,choi2024bigsmilesdata}. The primary pool covered a $T_g$ range of 140.2--768.1 K, while the external holdout covered 130.0--685.0 K. Canonicalization and exact-key overlap removal were applied before split generation, leaving zero duplicate records between the external holdout and the primary evaluation pool.
+
+All model selection, checkpoint selection, and ensemble or soup selection were restricted to train/validation information. Neither the primary test split nor the external holdout was used for hyperparameter tuning, candidate ranking, or ensemble weighting. This separation was maintained throughout the reported revision to avoid information leakage from evaluation data into model development.
+
+\begin{table}[t]
+  \centering
+  \caption{Dataset and evaluation protocol.}
+  \label{tab:dataset_protocol}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.25\linewidth}cccc>{\raggedright\arraybackslash}p{0.22\linewidth}>{\raggedright\arraybackslash}p{0.20\linewidth}}
+    \toprule
+    Split/source & Train N & Val N & Test N & $T_g$ range (K) & Source & Protocol note \\
+    \midrule
+    Primary pool & 5409 & 1077 & 1077 & 140.2--768.1 & PolyMetriX-derived public experimental pool \cite{kunchapu2025polymetrix} & experimental only \\
+    Supplemental train & 383 & -- & -- & 130.0--649.0 & Mendeley Data supplement \cite{liu2023mendeleytg} & used only for training \\
+    External holdout & 302 & -- & -- & 130.0--685.0 & BigSMILES-derived external benchmark \cite{choi2024bigsmilesdata} & excluded from selection \\
+    \bottomrule
+  \end{tabular}
+  }
+\end{table}
+
+\subsection{Molecular representations}
+
+Three complementary molecular views were used. First, a graph representation encoded atom-level connectivity and local topological information from polymer molecular structure through an AttentiveFP backbone \cite{xiong2020pushing} using 9 atom features and 7 bond features. Second, a descriptor branch supplied a 528-dimensional handcrafted feature vector intended to preserve chemically meaningful signals related to rigidity, heteroatom content, ring character, and other global attributes. Third, a chain-context branch represented polymer-specific sequential or segment-level information through a 980-dimensional context vector composed of chain-level n-gram features (576 dimensions), segment-window embeddings (128), graph-neighborhood context from two radii (256), and 20 interpretable polymer statistics.
+
+All three branches were projected to a 128-dimensional hidden space before multimodal interaction. In addition, an 11-dimensional geometry prior derived from a single distance-geometry conformer was used only during training as an auxiliary stabilizer and was not required at inference. The motivation for this design was not that each branch should dominate in all circumstances, but that different branches may become informative for different polymer families and $T_g$ regimes. The model was therefore designed to learn across heterogeneous modalities rather than to assume uniform branch reliability.
+
+\subsection{Multimodal regression framework with mechanism-aware correction and reliability-informed diagnostics}
+
+The proposed framework consisted of three components. Multiscale Polymer Context Encoding (MSCE) provided the base multimodal representation by combining graph, descriptor, and chain-context information into a shared regression pipeline. Reliability-Conditioned Multimodal Fusion (RCMF) then produced a bounded conditioning signal that summarized sample-dependent branch agreement and uncertainty. Mechanism-Aware Signed Decomposition (MASD) provided a correction stage intended to improve difficult predictions through structured signed residual adjustment.
+
+For RCMF, the branch-level reliability vector was defined as
+\begin{equation}
+q = [y_d,\ y_g,\ u_d,\ u_g,\ |y_d-y_g|],
+\end{equation}
+where $y_d$ and $y_g$ denote descriptor- and graph-branch predictions and $u_d$ and $u_g$ denote the corresponding aleatoric uncertainty estimates. The fused state was then written as
+\begin{equation}
+h_{\text{fuse}} = h_{\text{anchor}} + r\,\psi([h_d,h_g,h_{\text{ctx}},q]),
+\end{equation}
+where $\psi(\cdot)$ is the learned interaction map and $r$ is a bounded residual gate. In this study, RCMF is interpreted as a reliability-informed diagnostic surface for the downstream correction path rather than as a standalone accuracy-improving predictor.
+
+MASD converted the anchor prediction into the final output through a bounded signed correction,
+\begin{equation}
+\hat{y}=y_{\text{anchor}} + g\cdot \sum_m \alpha_m \Delta_m,
+\end{equation}
+where $g$ is the correction gate, $\alpha_m$ are sparse slot weights, and $\Delta_m$ are signed residual components. The default MASD configuration retained four signed slots, $[+,+,-,-]$, to balance additive and subtractive correction without claiming any one-to-one chemical meaning for each slot.
+
+In the final reported configuration, candidate checkpoints and inference stabilization were selected by validation-only procedures, including the validation-selected trisoup configuration reported in Table~\ref{tab:overall_performance}. RCMF is described here as a diagnostic conditioning component within the predictive path, not as an independently validated source of accuracy gain. That distinction is important because the ablation audit did not support a strong standalone performance claim for RCMF.
+
+\subsection{Hard subgroup definition}
+
+The hard subgroup was defined independently from the proposed model to minimize posterior bias. For each evaluation split, the strongest baseline (Simple Concat) was first used to generate absolute prediction errors. The top 20\% of samples ranked by that baseline error were then marked as the hard subgroup through a fixed mask. All compared methods were evaluated on the same mask for that run.
+
+This protocol means that the hard subgroup does not represent a post hoc selection based on the proposed model's failures or successes. Instead, it represents baseline-defined difficult polymers, which makes it a low-bias way to test whether the multimodal framework is especially useful where ordinary prediction is hardest.
+
+\subsection{Baselines}
+
+The baseline set included a strongest classical machine-learning model based on molecular descriptors, a graph-only AttentiveFP model, a strong simple multimodal baseline, and a same-split polyBERT baseline \cite{kuenneth2023polybert}. The simple multimodal baseline served as the principal reference for the primary, hard-subgroup, and external comparisons reported in the 100-run package. PolyBERT was fine-tuned and evaluated under the same train/validation/test/external protocol but was completed for five matched seeds rather than for the full 100-run audit.
+
+The baseline comparison was interpreted conservatively. PolyBERT was not treated as universally weaker than the proposed model because its average primary and external errors were competitive. Instead, it was used as a domain-specific sequence-baseline audit to assess whether the proposed multimodal model offered distinctive value beyond a pretrained sequence model, particularly on difficult polymers.
+
+\subsection{Evaluation metrics and statistical testing}
+
+Primary evaluation used MAE as the main error metric, with RMSE, Pearson correlation, and $R^2$ reported when available. Statistical comparisons between the strongest baseline and the proposed model were performed across 100 frozen training seeds using paired $t$-tests and Wilcoxon signed-rank tests, and 95\% confidence intervals were reported from the frozen multi-run package. These tests quantify stability under training randomness rather than population-level inference over all possible polymer samples.
+
+For the primary test set, the proposed model improved MAE by 0.686 K with $p=1.360\times 10^{-33}$ and Cohen's $d_z=1.8332$. For the hard subgroup, the mean improvement was 4.224 K with $p=2.542\times 10^{-21}$ and Cohen's $d_z=1.2143$. For the external holdout, the mean improvement was 0.404 K with $p=1.147\times 10^{-5}$ and Cohen's $d_z=0.4622$. These values indicate that the primary and hard-subgroup gains were statistically reliable, whereas the external effect was smaller and should be interpreted more cautiously.
+
+\subsection{Implementation and reproducibility}
+
+The main repeated-run package used seeds 370--469 for the 100-run baseline-versus-proposed comparison. The primary train/validation/test split size was fixed at 5409/1077/1077 for each seed, and the external holdout (302 samples) remained excluded from training, validation, checkpoint selection, and checkpoint aggregation. The fixed five-seed audits reported for polyBERT and the ablation study were treated as separate supporting analyses rather than pooled with the 100-run headline estimate.
+
+Training was implemented in PyTorch/PyTorch Geometric with stage-wise validation monitoring. The locked diagnostic configuration used AdamW optimization with batch size 192, hidden dimension 128, and weight decay $1\times 10^{-4}$. The four training stages used maximum epoch counts of 14, 14, 12, and 10 with corresponding learning rates of $1\times 10^{-3}$, $9\times 10^{-4}$, $8\times 10^{-4}$, and $2\times 10^{-4}$, and early-stopping patience values of 4, 4, 3, and 3. Validation MAE was tracked throughout training and served as the primary checkpoint selection criterion.
+
+The reported trisoup inference stabilization also used validation-only information. Candidate checkpoints were first filtered to those within 0.020 K of the seed's best validation MAE. Three checkpoints were then selected by a fixed priority rule that favored lower validation MAE together with smaller validation chemistry-cluster deterioration, and their predictions were averaged with equal weights. Code, split files, and reproducibility assets are archived in the project repository referenced in the Data Availability statement.
+
+\section{Results and Discussion}
+
+\subsection{Dataset characteristics and evaluation protocol}
+
+The evaluation protocol combined a primary in-domain test set, a baseline-defined hard subgroup, and a fully independent external holdout (Table~\ref{tab:dataset_protocol}). Figure~\ref{fig:workflow} summarizes how these datasets, multimodal inputs, validation-only model selection rules, and bounded design-oriented analyses fit into a single computer--materials workflow. This three-layer structure is important because an average-case MAE alone is not sufficient to judge whether a model is useful for materials design. In practice, polymer design decisions often depend on difficult or atypical cases, and real deployment will encounter chemistry that is not perfectly covered by the development set.
+
+The primary pool used experimental $T_g$ entries only, with a broad range from 140.2 to 768.1 K. The external holdout also contained experimental-only records and remained fully excluded from training, validation, model selection, and soup selection. Overlap removal yielded zero shared records between the primary evaluation pool and the external holdout. The hard subgroup, meanwhile, was fixed by the strongest baseline's top-20\% absolute-error mask, providing a low-risk and model-independent definition of difficult polymers.
+
+Together, these choices support a computer-materials evaluation framework rather than a leaderboard-only benchmark. The reported results therefore address average-case prediction, design-relevant difficult polymers, and moderate chemistry-space shift as related but distinct questions.
+
+\subsection{Overall \texorpdfstring{$T_g$}{Tg} prediction performance}
+
+\begin{table}[t]
+  \centering
+  \caption{Overall performance on the primary test set. Run counts differ because the strongest baseline and proposed model come from the authoritative 100-run package, the classical and graph-only comparators were completed as 10-run audits, and polyBERT was completed as a matched five-seed audit. Paired significance tests are reported in the main text for the 100-run baseline-versus-proposed comparison. polyBERT is included as a five-seed sequence-baseline audit and is not pooled with the 100-run statistical package.}
+  \label{tab:overall_performance}
+  \resizebox{0.94\textwidth}{!}{%
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.29\linewidth}>{\centering\arraybackslash}p{0.09\linewidth}ccc>{\raggedright\arraybackslash}p{0.34\linewidth}}
+    \toprule
+    Method & N runs & MAE (K) & RMSE (K) & Pearson & Comparison note \\
+    \midrule
+    Descriptor random forest & 10 & 29.971 & 42.092 & 0.930981 & Descriptor-only classical baseline \\
+    AttentiveFP graph-only & 10 & 37.850 & 50.432 & 0.895973 & Graph-only neural baseline \\
+    Strongest simple multimodal baseline & 100 & 24.668 & 36.794 & 0.945441 & Primary reference baseline for the frozen 100-run comparison \\
+    polyBERT fine-tuned & 5 & 24.463 & 37.091 & 0.944989 & Domain-specific sequence-baseline audit; not a 100-run comparator \\
+    Proposed model & 100 & 23.981 & 36.260 & 0.946584 & Authoritative 100-run final package \\
+    \bottomrule
+  \end{tabular}
+  }
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{Figure_2.pdf}
+  \caption{Overall performance with difficult-subset context. Left, primary-set MAE for the strongest multimodal baseline, the matched five-seed polyBERT audit, and the proposed model. Center, hard-subgroup MAE on the fixed baseline-defined difficult subset for the 100-run strongest-baseline and proposed-model package only; the matched five-seed polyBERT difficult-subset audit is reported separately in Supplementary Table~S3. Right, MAE reductions relative to the strongest baseline on the primary and external splits, showing a moderate primary gain for the proposed model, bounded external gain, and a slightly stronger external average for polyBERT. Error bars denote 95\% confidence intervals across frozen runs or matched audit seeds where available.}
+  \label{fig:overall_performance}
+\end{figure}
+
+On the primary test set, the proposed model reduced MAE from 24.67 to 23.98 K and RMSE from 36.79 to 36.26 K while maintaining a slightly higher Pearson correlation (0.9466 vs.\ 0.9454) than the strongest baseline (Table~\ref{tab:overall_performance}). Figure~\ref{fig:overall_performance} places this moderate average-case gain next to the baseline-defined difficult-subset and external-delta context so that the reader can distinguish headline performance from bounded transfer behavior. The absolute MAE reduction of 0.686 K is moderate, but paired tests across the 100 frozen training seeds were strongly supportive ($p<1\times 10^{-32}$ with a large paired effect size). This indicates a consistent average-case gain rather than a result driven by a small number of favorable seeds.
+
+The five-seed polyBERT audit provides an important calibration point. PolyBERT reached a primary MAE of 24.46 K, which is competitive with the strongest simple multimodal baseline and closer to the proposed model than the classical or graph-only comparators. The average-case result therefore supports a moderate improvement over the strongest baseline, but not a universal superiority claim over every architecture tested here.
+
+From a materials-design perspective, the main value of the proposed approach is that the graph, descriptor, and chain-context branches produced a stable global improvement while preserving headroom for larger gains on structurally difficult polymers. This distinction becomes clearer when the evaluation shifts from average-case error to baseline-defined difficult samples.
+
+\subsection{Improvement on baseline-defined difficult polymers}
+
+\begin{table}[t]
+  \centering
+  \caption{Hard-subgroup and external-holdout results. The hard subgroup uses a fixed mask defined independently from the proposed model as the top-20\% of samples ranked by the strongest baseline's absolute error. Sign rate denotes the fraction of frozen runs with positive MAE reduction relative to the strongest baseline. Reported $p$-values are paired $t$-test results from the frozen 100-run package; the paired Wilcoxon signed-rank results are listed in Supplementary Table~S4.}
+  \label{tab:hard_external}
+  \resizebox{0.92\textwidth}{!}{%
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.23\linewidth}cccc>{\centering\arraybackslash}p{0.12\linewidth}>{\centering\arraybackslash}p{0.14\linewidth}}
+    \toprule
+    Split & Baseline MAE (K) & Proposed MAE (K) & Delta (K) & Percent improvement & Sign rate & $p$-value \\
+    \midrule
+    Hard subgroup & 29.376 & 25.152 & 4.224 & $-14.4\%$ & 96/100 & $2.54\times 10^{-21}$ \\
+    External holdout & 27.609 & 27.205 & 0.404 & $-1.5\%$ & 72/100 & $1.15\times 10^{-5}$ \\
+    \bottomrule
+  \end{tabular}
+  }
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{Figure_3.pdf}
+  \caption{Performance on the fixed baseline-defined hard subgroup. The hard subgroup is defined independently from the proposed model as the top-20\% of samples ranked by the strongest baseline's absolute error. The proposed model reduces hard-subgroup MAE by 4.224 K ($-14.4\%$), and the run-wise gain is positive in 96 of 100 frozen runs. Panels with intervals summarize 95\% confidence ranges across the repeated-run package.}
+  \label{fig:hard_subgroup}
+\end{figure}
+
+The clearest result of this study is the hard-subgroup improvement. On the fixed baseline-defined difficult subset, MAE decreased from 29.38 to 25.15 K, corresponding to an absolute reduction of 4.224 K and a relative reduction of 14.4\% (Table~\ref{tab:hard_external}). Figure~\ref{fig:hard_subgroup} visualizes both the aggregate reduction and the run-wise consistency of this effect. The gain remained strongly statistically significant and was positive in 96 of the 100 frozen runs. Because the mask was fixed from baseline residuals, the analysis avoids selecting favorable samples from the proposed model.
+
+This result is particularly relevant to materials design, where difficult and atypical polymers often determine the practical value of a screening model. A method that improves marginally on easy or typical samples but materially reduces error on difficult polymers may be more useful for design prioritization than a method with slightly better average error but weak behavior on hard cases. At the same time, this subgroup should be interpreted as a baseline-defined difficult subset rather than a chemistry-defined polymer class; complementary chemistry-defined subgroup results are summarized in Supplementary Table~S2. This analysis should therefore be read as an error-tail stress test and should not be interpreted as evidence that all chemically difficult polymer classes are improved.
+
+The polyBERT audit reinforces this interpretation but should be read conservatively because it covers only five matched seeds. Within that audit, the sequence baseline did not reproduce the difficult-subset behavior of the proposed multimodal model (Supplementary Table~S3). This divergence suggests that the main contribution of the framework is not simply average accuracy, but better handling of baseline-defined difficult polymers. The polyBERT hard-subgroup result is therefore used as a diagnostic audit rather than as a definitive architecture-level conclusion.
+
+\subsection{External holdout under chemistry-space shift}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{Figure_4.pdf}
+  \caption{External-holdout behavior under moderate chemistry-space shift. The external set is fully excluded from training, validation, model selection, and soup selection. The figure summarizes maximum-train Tanimoto proximity and the most decision-relevant subgroup deltas, showing that gains are bounded overall and are concentrated in chemically closer or within-domain subsets rather than uniformly distributed across shifted chemistry. Subgroup sizes are provided in Supplementary Table~S2.}
+  \label{fig:external_shift}
+\end{figure}
+
+The external holdout provides a stricter test of model behavior than the primary split because it originates from a distinct source and was excluded from every stage of training, validation, model selection, and soup selection. Across 100 runs, the proposed model reduced external MAE from 27.61 to 27.21 K, corresponding to a mean improvement of 0.404 K. Figure~\ref{fig:external_shift} summarizes how this gain concentrates in chemically closer subsets and becomes much smaller in shifted subsets. The effect was statistically significant but smaller than the primary and hard-subgroup gains, and it should therefore be interpreted as bounded support under moderate chemistry-space shift rather than as broad out-of-domain superiority.
+
+Chemical-space analysis supports this bounded interpretation. The mean maximum Tanimoto similarity between external samples and the training set was 0.629, indicating moderate rather than extreme shift. Improvements were concentrated in near-train and within-domain subsets, while far-train and shifted-domain subsets showed much smaller or nearly absent gains. In the stratified audit, the near-train subset improved by 0.786 K, whereas the far-train subset changed by only 0.011 K; the within-domain and shifted-domain subsets showed 0.786 and 0.095 K improvement, respectively. This pattern is consistent with a model that remains useful under moderate chemistry-space shift but does not establish broad superiority across all external regimes.
+
+The polyBERT comparison is again important for calibration. In the five-seed matched audit, polyBERT reached an external MAE of 26.84 K, slightly lower than the proposed model's 27.20 K average from the 100-run package. The external result therefore supports competitive performance and a small improvement over the strongest multimodal baseline, but not superiority over every alternative. A more accurate statement is that the proposed model offers bounded utility under moderate shift, whereas the relative advantage across external subsets depends on chemistry proximity and sample difficulty.
+
+\subsection{Limited ablation audit and role of reliability-informed diagnostics}
+
+A limited five-seed ablation audit is summarized in Supplementary Table~S1 and Supplementary Figure~S3. The audit indicates that MSCE already improves over the strongest baseline and that MASD carries the clearest measurable correction benefit. By contrast, RCMF alone does not improve MAE materially, and the full MSCE + RCMF + MASD variant does not surpass the no-RCMF MASD variant on this five-seed slice. Accordingly, RCMF is retained as an auxiliary diagnostic component, whereas MASD provides the measurable correction benefit in the current implementation. The main performance contribution of the framework is therefore centered on multimodal representation plus mechanism-aware correction.
+
+\subsection{Structure--property and design relevance}
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \caption{Structure--property design implications derived from the frozen-model analyses.}
+  \label{tab:design_implications}
+  \setlength{\tabcolsep}{4pt}
+  \resizebox{0.97\textwidth}{!}{%
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.20\linewidth}>{\raggedright\arraybackslash}p{0.22\linewidth}>{\raggedright\arraybackslash}p{0.24\linewidth}>{\raggedright\arraybackslash}p{0.26\linewidth}}
+    \toprule
+    Structural factor & Proxy used & Observed model behavior & Design implication \\
+    \midrule
+    Backbone rigidity & Aromatic/ring count & Stable improvement in aromatic-dense families & Useful for retrospective high-$T_g$ screening within covered chemistry space \\
+    Flexible segments & Ether oxygen and chain-context descriptors & Positive but moderate gains in ether-oxygen families & Multimodal context helps distinguish flexible backbones from locally rigid motifs \\
+    Interchain interactions & Amide/imide motifs & No stable improvement & Add hydrogen-bonding, crystallinity, and processing descriptors before deployment in these families \\
+    Chemistry-space shift & Maximum train-set Tanimoto similarity & Gains concentrated in near-train and within-domain subsets & Deployment should be bounded to moderate-shift regions or accompanied by additional validation \\
+    \bottomrule
+  \end{tabular}
+  }
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{Figure_5.pdf}
+  \caption{Structure--property and bounded design-relevance analysis based on frozen model outputs. Top left, family-level MAE deltas relative to the strongest baseline show stable gains for aromatic-dense, fluorinated, and ether-oxygen families but not for amide, imide-like, or heterogeneous other polymers. Top right, family-level behavior is projected against structural proxies, with bubble size proportional to family size and color indicating train-set proximity. Bottom, design-oriented implications derived from the frozen-model analyses summarize where the model is most defensible for bounded retrospective screening. Families marked with an asterisk have $n<10$ and are included for transparency only as exploratory diagnostics.}
+  \label{fig:design_relevance}
+\end{figure}
+
+The design relevance of the model becomes clearer when the error analysis is linked back to polymer structure--property behavior. Table~\ref{tab:design_implications} summarizes the main structure--property--design links that are supported by the frozen-model analyses, and Figure~\ref{fig:design_relevance} provides the corresponding family-level and retrospective-screening context. Cluster-level diagnosis showed stable positive mean improvement for aromatic-dense, fluorinated, and ether-oxygen families, whereas amide, imide-like, and heterogeneous other families showed no stable improvement. The positive families are chemically interpretable: aromatic and ring-rich backbones are commonly associated with higher $T_g$ through greater rigidity, while ether-containing systems may benefit from multimodal representation because graph, descriptor, and chain-context views provide complementary information about flexibility and packing-related features.
+
+Three materials-design implications follow from these results. First, aromatic- and ring-rich backbones showed the clearest stable gains, supporting cautious use of the model for retrospective high-$T_g$ screening within well-covered chemistry space. Second, ether-oxygen polymers benefited from the multimodal treatment, suggesting that combining global descriptors with graph and chain-context information can help separate flexible backbones from locally rigid motifs. Third, the weak response of amide- and imide-like families indicates that chemically relevant interactions remain missing from the current representation and should be made explicit before the model is used for hydrogen-bond-dominated polymer classes.
+
+The retrospective screening view leads to a similar conclusion. Top-ranked external candidates were enriched in aromatic-dense and ether-oxygen families, which is consistent with the family-level gains and with established rigidity- and packing-related structure--property trends. This behavior supports cautious use of the model for bounded retrospective prioritization within known chemistry space, but it remains hypothesis-generating and should not be presented as de novo material discovery.
+
+The failure clusters are equally informative. Amide and imide-like families are heteroatom-rich and likely more sensitive to intermolecular hydrogen bonding, crystallinity, and processing history than can be captured by the present molecular inputs alone \cite{kuo2008hydrogenbonding}. The heterogeneous other cluster also showed the lowest mean maximum train-set similarity, suggesting that chemical sparsity and atypical backbone structure contributed to its weak response. These observations support a materials-facing limitation statement: some polymer families may require explicit descriptors for hydrogen bonding, crystallinity, or processing conditions before reliable $T_g$ correction can be expected under chemistry-space shift.
+
+\subsection{Limitations and future work}
+
+Several limitations remain important. First, the primary-set improvement was moderate even though it was statistically reliable. Second, the external evidence was bounded: the mean external gain was only 0.404 K, and polyBERT was slightly more competitive on the external average. Third, the ablation audit did not support a standalone claim for RCMF as a direct accuracy-improving module. Fourth, some polymer families, particularly amide, imide-like, and heterogeneous other groups, showed no stable improvement and in some cases slight degradation. Fifth, the current study relied on one main $T_g$ data ecosystem with a distinct but still limited external holdout.
+
+These limitations define a practical future-work agenda. Broader validation should include additional external polymer datasets, copolymers, blends, and systems where composition or processing conditions are explicitly represented. Descriptor expansion toward hydrogen-bonding, crystallinity, free-volume surrogates, and processing-aware features may be especially important for the families that were not improved here. Finally, the present retrospective ranking should be followed by experimentally grounded candidate validation if the framework is to support real polymer design workflows.
+
+\section{Conclusion}
+
+This study presented a multimodal molecular representation learning framework for polymer $T_g$ prediction at the computer--materials interface. The central result was a consistent and statistically reliable primary-set improvement together with a much larger gain on a fixed baseline-defined hard subgroup. The proposed model reduced primary MAE from 24.67 to 23.98 K and hard-subgroup MAE from 29.38 to 25.15 K, indicating that multimodal representation learning with mechanism-aware correction is particularly useful for difficult polymers that are more relevant to design decisions than easy benchmark cases.
+
+The external holdout result was smaller, improving from 27.61 to 27.21 K under moderate chemistry-space shift, and should therefore be interpreted as bounded support rather than as evidence of broad deployment readiness. The polyBERT audit further sharpened this conclusion: a pretrained sequence model remained competitive on the primary average and slightly better on the external average, but in its separate matched five-seed audit it did not reproduce the low difficult-subset error achieved by the proposed model. This pattern indicates that the proposed framework's distinguishing strength lies in difficult-polymer behavior rather than uniform superiority.
+
+The study also clarified its own limits. MASD carried the clearest measurable correction benefit in the current ablation audit, while RCMF could only be justified as a conditioning component rather than a standalone source of accuracy gain. In addition, amide, imide-like, and heterogeneous other families did not show stable improvement, pointing to missing hydrogen-bonding, crystallinity, and processing-history descriptors. Even with these limitations, the results suggest that multimodal polymer representation learning is a useful direction for data-driven polymer design because it improves not only average prediction quality, but also the structure--property modeling of polymers that are hardest to predict. Future work should extend the framework to broader polymer domains, add descriptors for hydrogen bonding, crystallinity, and processing history, and test retrospective ranking against experimental follow-up.
+
+\section*{Data Availability}
+Code, processed split definitions, figure source data, statistical-test outputs, fixed hard-subgroup masks, and reproducibility artifacts supporting this study are publicly available at \url{https://github.com/bing-abc/msce-rcmf-masd}. The release package also includes the supplementary tables and result exports used in this submission. A DOI-linked archival release of the same package has been prepared for Zenodo/Mendeley Data; if the DOI is not minted before submission, it will be provided upon acceptance. Because the registry integrates multiple third-party public polymer data sources, the repository provides the processing pipeline, split files, metadata, and source-specific accession links rather than re-hosting every upstream source table directly. The raw third-party datasets are therefore not redistributed in full. The upstream source accessions used here are the PolyMetriX public ecosystem release \cite{kunchapu2025polymetrix} with curated dataset DOI \url{https://doi.org/10.5281/zenodo.14980914}, the Mendeley Data supplement of Liu \cite{liu2023mendeleytg}, and the BigSMILES external benchmark release associated with Choi et al.\ \cite{choi2024bigsmilesdata} and Figshare accession \url{https://doi.org/10.6084/m9.figshare.c.6858337.v1}.
+
+\section*{Declaration of Competing Interest}
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+\section*{Funding}
+This work was supported by the Jilin Province Science and Technology Innovation Platform Construction Project (Grant No.~YDZJ202302CXJD027).
+
+\section*{Acknowledgements}
+The authors thank the maintainers of the public polymer data sources used to assemble the overlap-purged registry and acknowledge the computing resources used for the repeated-evaluation study.
+
+\section*{CRediT authorship contribution statement}
+Songjiang Li and Bing Zhu: Conceptualization, Methodology, Software, Formal analysis, Writing -- original draft.\\
+Yujie Feng, Yapeng Diao, Wenzhuo Jia, Xuan Fang, and XiaoWan Gu: Investigation, Validation, Writing -- review \& editing.\\
+Peng Wang: Supervision, Project administration, Writing -- review \& editing.
+
+\section*{Declaration of generative AI and AI-assisted technologies in the manuscript preparation process}
+During the preparation of this work, the authors used OpenAI ChatGPT and Anthropic Claude Code to assist with language editing, wording refinement, formatting checks, manuscript organization, code/documentation review, and revision planning. No generative AI tool was used to create or modify scientific images, raw data, or experimental results. After using these tools, the authors reviewed and edited the content as needed, verified the experimental outputs and scientific interpretations, and take full responsibility for the content of the article.
+
+\bibliographystyle{elsarticle-num}
+\bibliography{references,extra}
+
+\end{document}

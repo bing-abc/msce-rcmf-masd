@@ -1,0 +1,324 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{tao2021benchmarking}
+L.~Tao, V.~Varshney, Y.~Li,
+  \href{https://doi.org/10.1021/acs.jcim.1c01031}{Benchmarking machine learning
+  models for polymer informatics: An example of glass transition temperature},
+  Journal of Chemical Information and Modeling 61~(11) (2021) 5395--5413.
+\newblock \href {https://doi.org/10.1021/acs.jcim.1c01031}
+  {\path{doi:10.1021/acs.jcim.1c01031}}.
+\newline\urlprefix\url{https://doi.org/10.1021/acs.jcim.1c01031}
+
+\bibitem{xie2020glass}
+R.~Xie, A.~R. Weisen, Y.~Lee, M.~P. Aplan, A.~M. Fenton, A.~E. Masucci,
+  F.~Kempe, M.~Sommer, C.~W. Pester, R.~H. Colby, E.~D. Gomez,
+  \href{https://doi.org/10.1038/s41467-020-14656-8}{Glass transition
+  temperature from the chemical structure of conjugated polymers}, Nature
+  Communications 11 (2020) 893.
+\newblock \href {https://doi.org/10.1038/s41467-020-14656-8}
+  {\path{doi:10.1038/s41467-020-14656-8}}.
+\newline\urlprefix\url{https://doi.org/10.1038/s41467-020-14656-8}
+
+\bibitem{audus2017polymer}
+D.~J. Audus, J.~J. de~Pablo,
+  \href{https://doi.org/10.1021/acsmacrolett.7b00228}{Polymer informatics:
+  Opportunities and challenges}, ACS Macro Letters 6~(10) (2017) 1078--1082.
+\newblock \href {https://doi.org/10.1021/acsmacrolett.7b00228}
+  {\path{doi:10.1021/acsmacrolett.7b00228}}.
+\newline\urlprefix\url{https://doi.org/10.1021/acsmacrolett.7b00228}
+
+\bibitem{ramprasad2017materialsinformatics}
+R.~Ramprasad, R.~Batra, G.~Pilania, A.~Mannodi-Kanakkithodi, C.~Kim,
+  \href{https://doi.org/10.1038/s41524-017-0056-5}{Machine learning in
+  materials informatics: Recent applications and prospects}, npj Computational
+  Materials 3 (2017) 54.
+\newblock \href {https://doi.org/10.1038/s41524-017-0056-5}
+  {\path{doi:10.1038/s41524-017-0056-5}}.
+\newline\urlprefix\url{https://doi.org/10.1038/s41524-017-0056-5}
+
+\bibitem{butler2018machinelearning}
+K.~T. Butler, D.~W. Davies, H.~Cartwright, O.~Isayev, A.~Walsh,
+  \href{https://doi.org/10.1038/s41586-018-0337-2}{Machine learning for
+  molecular and materials science}, Nature 559~(7715) (2018) 547--555.
+\newblock \href {https://doi.org/10.1038/s41586-018-0337-2}
+  {\path{doi:10.1038/s41586-018-0337-2}}.
+\newline\urlprefix\url{https://doi.org/10.1038/s41586-018-0337-2}
+
+\bibitem{geurts2019datadriven}
+L.~Himanen, A.~Geurts, A.~S. Foster, P.~Rinke,
+  \href{https://doi.org/10.1002/advs.201900808}{Data-driven materials science:
+  Status, challenges, and perspectives}, Advanced Science 6~(21) (2019)
+  1900808.
+\newblock \href {https://doi.org/10.1002/advs.201900808}
+  {\path{doi:10.1002/advs.201900808}}.
+\newline\urlprefix\url{https://doi.org/10.1002/advs.201900808}
+
+\bibitem{chen2021currentstatus}
+L.~Chen, G.~Pilania, R.~Batra, T.~D. Huan, C.~Kim, C.~Kuenneth, R.~Ramprasad,
+  \href{https://doi.org/10.1016/j.mser.2020.100595}{Polymer informatics:
+  Current status and critical next steps}, Materials Science and Engineering:
+  R: Reports 144 (2021) 100595.
+\newblock \href {https://doi.org/10.1016/j.mser.2020.100595}
+  {\path{doi:10.1016/j.mser.2020.100595}}.
+\newline\urlprefix\url{https://doi.org/10.1016/j.mser.2020.100595}
+
+\bibitem{morand2024structureguided}
+L.~Morand, T.~Iraki, J.~Dornheim, S.~Sandfeld, N.~Link, D.~Helm,
+  \href{https://doi.org/10.1016/j.matdes.2024.113453}{Machine learning for
+  structure-guided materials and process design}, Materials \& Design 248
+  (2024) 113453.
+\newblock \href {https://doi.org/10.1016/j.matdes.2024.113453}
+  {\path{doi:10.1016/j.matdes.2024.113453}}.
+\newline\urlprefix\url{https://doi.org/10.1016/j.matdes.2024.113453}
+
+\bibitem{park2022prediction}
+J.~Park, Y.~Shim, F.~Lee, A.~Rammohan, S.~Goyal, M.~Shim, C.~Jeong, D.~S. Kim,
+  \href{https://doi.org/10.1021/acspolymersau.1c00050}{Prediction and
+  interpretation of polymer properties using the graph convolutional network},
+  ACS Polymers Au 2~(4) (2022) 213--222.
+\newblock \href {https://doi.org/10.1021/acspolymersau.1c00050}
+  {\path{doi:10.1021/acspolymersau.1c00050}}.
+\newline\urlprefix\url{https://doi.org/10.1021/acspolymersau.1c00050}
+
+\bibitem{white2016freevolume}
+R.~P. White, J.~E.~G. Lipson,
+  \href{https://doi.org/10.1021/acs.macromol.6b00215}{Polymer free volume and
+  its connection to the glass transition}, Macromolecules 49~(11) (2016)
+  3987--4007.
+\newblock \href {https://doi.org/10.1021/acs.macromol.6b00215}
+  {\path{doi:10.1021/acs.macromol.6b00215}}.
+\newline\urlprefix\url{https://doi.org/10.1021/acs.macromol.6b00215}
+
+\bibitem{tang2025assessing}
+H.~Tang, T.~Yue, Y.~Li,
+  \href{https://doi.org/10.1021/acs.jcim.5c00550}{Assessing uncertainty in
+  machine learning for polymer property prediction: A benchmark study}, Journal
+  of Chemical Information and Modeling 65~(13) (2025) 6585--6598.
+\newblock \href {https://doi.org/10.1021/acs.jcim.5c00550}
+  {\path{doi:10.1021/acs.jcim.5c00550}}.
+\newline\urlprefix\url{https://doi.org/10.1021/acs.jcim.5c00550}
+
+\bibitem{heid2023characterizing}
+E.~Heid, C.~J. McGill, F.~H. Vermeire, W.~H. Green,
+  \href{https://doi.org/10.1021/acs.jcim.3c00373}{Characterizing uncertainty in
+  machine learning for chemistry}, Journal of Chemical Information and Modeling
+  63~(13) (2023) 4012--4029.
+\newblock \href {https://doi.org/10.1021/acs.jcim.3c00373}
+  {\path{doi:10.1021/acs.jcim.3c00373}}.
+\newline\urlprefix\url{https://doi.org/10.1021/acs.jcim.3c00373}
+
+\bibitem{antoniuk2022representing}
+E.~R. Antoniuk, P.~Li, B.~Kailkhura, A.~M. Hiszpanski,
+  \href{https://doi.org/10.1021/acs.jcim.2c00875}{Representing polymers as
+  periodic graphs with learned descriptors for accurate polymer property
+  predictions}, Journal of Chemical Information and Modeling 62~(22) (2022)
+  5435--5445.
+\newblock \href {https://doi.org/10.1021/acs.jcim.2c00875}
+  {\path{doi:10.1021/acs.jcim.2c00875}}.
+\newline\urlprefix\url{https://doi.org/10.1021/acs.jcim.2c00875}
+
+\bibitem{kuenneth2023polybert}
+C.~Kuenneth, R.~Ramprasad,
+  \href{https://doi.org/10.1038/s41467-023-39868-6}{polybert: A chemical
+  language model to enable fully machine-driven ultrafast polymer informatics},
+  Nature Communications 14 (2023) 4099.
+\newblock \href {https://doi.org/10.1038/s41467-023-39868-6}
+  {\path{doi:10.1038/s41467-023-39868-6}}.
+\newline\urlprefix\url{https://doi.org/10.1038/s41467-023-39868-6}
+
+\bibitem{han2024multimodal}
+S.~Han, Y.~Kang, H.~Park, J.~Yi, G.~Park, J.~Kim,
+  \href{https://doi.org/10.1021/acsami.4c01207}{Multimodal transformer for
+  property prediction in polymers}, ACS Applied Materials \& Interfaces 16~(13)
+  (2024) 16853--16860.
+\newblock \href {https://doi.org/10.1021/acsami.4c01207}
+  {\path{doi:10.1021/acsami.4c01207}}.
+\newline\urlprefix\url{https://doi.org/10.1021/acsami.4c01207}
+
+\bibitem{xu2023transpolymer}
+W.~Xu, J.~Jiang, M.~Chen, X.~Zhang, Y.~Ma, W.~Fan, Z.~Zheng, Y.~Liu, S.~Zhang,
+  \href{https://doi.org/10.1038/s41524-023-01016-5}{Transpolymer: A
+  transformer-based language model for polymer property predictions}, npj
+  Computational Materials 9 (2023) 64.
+\newblock \href {https://doi.org/10.1038/s41524-023-01016-5}
+  {\path{doi:10.1038/s41524-023-01016-5}}.
+\newline\urlprefix\url{https://doi.org/10.1038/s41524-023-01016-5}
+
+\bibitem{zhao2023descriptorreview}
+Y.~Zhao, R.~J. Mulder, S.~Houshyar, T.~C. Le,
+  \href{https://doi.org/10.1039/D3PY00395G}{A review on the application of
+  molecular descriptors and machine learning in polymer design}, Polymer
+  Chemistry 14 (2023) 3325--3346.
+\newblock \href {https://doi.org/10.1039/D3PY00395G}
+  {\path{doi:10.1039/D3PY00395G}}.
+\newline\urlprefix\url{https://doi.org/10.1039/D3PY00395G}
+
+\bibitem{xiong2020pushing}
+Z.~Xiong, D.~Wang, X.~Liu, C.~Zhong, M.~Wan, X.~Li, X.~Li, M.~Luo, K.~Chen,
+  H.~Jiang, M.~Zheng,
+  \href{https://doi.org/10.1021/acs.jmedchem.9b00959}{Pushing the boundaries of
+  molecular representation for drug discovery with the graph attention
+  mechanism}, Journal of Medicinal Chemistry 63~(16) (2020) 8749--8760.
+\newblock \href {https://doi.org/10.1021/acs.jmedchem.9b00959}
+  {\path{doi:10.1021/acs.jmedchem.9b00959}}.
+\newline\urlprefix\url{https://doi.org/10.1021/acs.jmedchem.9b00959}
+
+\bibitem{wang2022molclr}
+Y.~Wang, J.~Wang, Z.~Cao, A.~B. Farimani,
+  \href{https://doi.org/10.1038/s42256-022-00447-x}{Molecular contrastive
+  learning of representations via graph neural networks}, Nature Machine
+  Intelligence 4 (2022) 279--287.
+\newblock \href {https://doi.org/10.1038/s42256-022-00447-x}
+  {\path{doi:10.1038/s42256-022-00447-x}}.
+\newline\urlprefix\url{https://doi.org/10.1038/s42256-022-00447-x}
+
+\bibitem{rong2020selfsupervised}
+Y.~Rong, Y.~Bian, T.~Xu, W.~Xie, Y.~Wei, W.~Huang, J.~Huang,
+  \href{https://proceedings.neurips.cc/paper/2020/hash/94aef38441efa3380a3bed3faf1f9d5d-Abstract.html}{Self-supervised
+  graph transformer on large-scale molecular data}, in: Advances in Neural
+  Information Processing Systems 33, 2020.
+\newline\urlprefix\url{https://proceedings.neurips.cc/paper/2020/hash/94aef38441efa3380a3bed3faf1f9d5d-Abstract.html}
+
+\bibitem{liu2022pretraining3d}
+S.~Liu, H.~Wang, W.~Liu, J.~Lasenby, H.~Guo, J.~Tang,
+  \href{https://arxiv.org/abs/2110.07728}{Pre-training molecular graph
+  representation with 3d geometry}, in: International Conference on Learning
+  Representations, 2022.
+\newline\urlprefix\url{https://arxiv.org/abs/2110.07728}
+
+\bibitem{chithrananda2020chemberta}
+S.~Chithrananda, G.~Grand, B.~Ramsundar,
+  \href{https://arxiv.org/abs/2010.09885}{Chemberta: Large-scale
+  self-supervised pretraining for molecular property prediction}, arXiv
+  preprint arXiv:2010.09885 (2020).
+\newline\urlprefix\url{https://arxiv.org/abs/2010.09885}
+
+\bibitem{baltrusaitis2019multimodal}
+T.~Baltrusaitis, C.~Ahuja, L.-P. Morency,
+  \href{https://doi.org/10.1109/TPAMI.2018.2798607}{Multimodal machine
+  learning: A survey and taxonomy}, IEEE Transactions on Pattern Analysis and
+  Machine Intelligence 41~(2) (2019) 423--443.
+\newblock \href {https://doi.org/10.1109/TPAMI.2018.2798607}
+  {\path{doi:10.1109/TPAMI.2018.2798607}}.
+\newline\urlprefix\url{https://doi.org/10.1109/TPAMI.2018.2798607}
+
+\bibitem{rollins2024molprop}
+Z.~A. Rollins, A.~C. Cheng, E.~Metwally,
+  \href{https://doi.org/10.1186/s13321-024-00846-9}{Molprop: Molecular property
+  prediction with multimodal language and graph fusion}, Journal of
+  Cheminformatics 16 (2024) 56.
+\newblock \href {https://doi.org/10.1186/s13321-024-00846-9}
+  {\path{doi:10.1186/s13321-024-00846-9}}.
+\newline\urlprefix\url{https://doi.org/10.1186/s13321-024-00846-9}
+
+\bibitem{gong2025mdfcl}
+X.~Gong, M.~Liu, Q.~Liu, Y.~Guo, G.~Wang,
+  \href{https://doi.org/10.1016/j.patcog.2025.111463}{Mdfcl: Multimodal data
+  fusion-based graph contrastive learning framework for molecular property
+  prediction}, Pattern Recognition 163 (2025) 111463.
+\newblock \href {https://doi.org/10.1016/j.patcog.2025.111463}
+  {\path{doi:10.1016/j.patcog.2025.111463}}.
+\newline\urlprefix\url{https://doi.org/10.1016/j.patcog.2025.111463}
+
+\bibitem{neverova2016moddrop}
+N.~Neverova, C.~Wolf, G.~Taylor, F.~Nebout,
+  \href{https://doi.org/10.1109/TPAMI.2015.2491925}{Moddrop: Adaptive
+  multi-modal gesture recognition}, IEEE Transactions on Pattern Analysis and
+  Machine Intelligence 38~(8) (2016) 1692--1706.
+\newblock \href {https://doi.org/10.1109/TPAMI.2015.2491925}
+  {\path{doi:10.1109/TPAMI.2015.2491925}}.
+\newline\urlprefix\url{https://doi.org/10.1109/TPAMI.2015.2491925}
+
+\bibitem{zhang2023provable}
+Q.~Zhang, H.~Wu, C.~Zhang, Q.~Hu, H.~Fu, J.~T. Zhou, X.~Peng,
+  \href{https://proceedings.mlr.press/v202/zhang23ar.html}{Provable dynamic
+  fusion for low-quality multimodal data}, in: Proceedings of the 40th
+  International Conference on Machine Learning, 2023, pp. 41753--41769.
+\newline\urlprefix\url{https://proceedings.mlr.press/v202/zhang23ar.html}
+
+\bibitem{gao2024embracing}
+Z.~Gao, X.~Jiang, X.~Xu, F.~Shen, Y.~Li, H.~T. Shen,
+  \href{https://openaccess.thecvf.com/content/CVPR2024/html/Gao_Embracing_Unimodal_Aleatoric_Uncertainty_for_Robust_Multimodal_Fusion_CVPR_2024_paper.html}{Embracing
+  unimodal aleatoric uncertainty for robust multimodal fusion}, in: Proceedings
+  of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, 2024,
+  pp. 26876--26885.
+\newline\urlprefix\url{https://openaccess.thecvf.com/content/CVPR2024/html/Gao_Embracing_Unimodal_Aleatoric_Uncertainty_for_Robust_Multimodal_Fusion_CVPR_2024_paper.html}
+
+\bibitem{abdar2021uncertainty}
+M.~Abdar, F.~Pourpanah, S.~Hussain, D.~Rezazadegan, L.~Liu, M.~Ghavamzadeh,
+  P.~Fieguth, X.~Cao, A.~Khosravi, U.~R. Acharya, V.~Makarenkov, S.~Nahavandi,
+  \href{https://doi.org/10.1016/j.inffus.2021.05.008}{A review of uncertainty
+  quantification in deep learning: Techniques, applications and challenges},
+  Information Fusion 76 (2021) 243--297.
+\newblock \href {https://doi.org/10.1016/j.inffus.2021.05.008}
+  {\path{doi:10.1016/j.inffus.2021.05.008}}.
+\newline\urlprefix\url{https://doi.org/10.1016/j.inffus.2021.05.008}
+
+\bibitem{guo2017calibration}
+C.~Guo, G.~Pleiss, Y.~Sun, K.~Q. Weinberger,
+  \href{https://proceedings.mlr.press/v70/guo17a.html}{On calibration of modern
+  neural networks}, in: Proceedings of the 34th International Conference on
+  Machine Learning, 2017, pp. 1321--1330.
+\newline\urlprefix\url{https://proceedings.mlr.press/v70/guo17a.html}
+
+\bibitem{jaworska2005applicability}
+J.~Jaworska, N.~Nikolova-Jeliazkova, T.~Aldenberg,
+  \href{https://doi.org/10.1177/026119290503300508}{Qsar applicability domain
+  estimation by projection of the training set in descriptor space: A review},
+  Alternatives to Laboratory Animals 33~(5) (2005) 445--459.
+\newblock \href {https://doi.org/10.1177/026119290503300508}
+  {\path{doi:10.1177/026119290503300508}}.
+\newline\urlprefix\url{https://doi.org/10.1177/026119290503300508}
+
+\bibitem{geifman2019selectivenet}
+Y.~Geifman, R.~El-Yaniv,
+  \href{https://proceedings.mlr.press/v97/geifman19a.html}{Selectivenet: A deep
+  neural network with an integrated reject option}, in: Proceedings of the 36th
+  International Conference on Machine Learning, 2019, pp. 2151--2159.
+\newline\urlprefix\url{https://proceedings.mlr.press/v97/geifman19a.html}
+
+\bibitem{sagawa2020groupshift}
+S.~Sagawa, P.~W. Koh, T.~B. Hashimoto, P.~Liang,
+  \href{https://arxiv.org/abs/1911.08731}{Distributionally robust neural
+  networks for group shifts: On the importance of regularization for worst-case
+  generalization}, in: International Conference on Learning Representations,
+  2020.
+\newline\urlprefix\url{https://arxiv.org/abs/1911.08731}
+
+\bibitem{kunchapu2025polymetrix}
+S.~Kunchapu, K.~M. Jablonka,
+  \href{https://doi.org/10.1038/s41524-025-01823-y}{Polymetrix: An ecosystem
+  for digital polymer chemistry}, npj Computational Materials 11 (2025) 312.
+\newblock \href {https://doi.org/10.1038/s41524-025-01823-y}
+  {\path{doi:10.1038/s41524-025-01823-y}}.
+\newline\urlprefix\url{https://doi.org/10.1038/s41524-025-01823-y}
+
+\bibitem{liu2023mendeleytg}
+S.~Liu, \href{https://doi.org/10.17632/385nsgjvkm.1}{The glass transition in
+  the perspective of the machine learning} (2023).
+\newblock \href {https://doi.org/10.17632/385nsgjvkm.1}
+  {\path{doi:10.17632/385nsgjvkm.1}}.
+\newline\urlprefix\url{https://doi.org/10.17632/385nsgjvkm.1}
+
+\bibitem{choi2024bigsmilesdata}
+S.~Choi, J.~Lee, J.~Seo, S.~W. Han, S.~H. Lee, J.-H. Seo, J.~Seok,
+  \href{https://doi.org/10.1038/s41597-024-03212-4}{Automated {BigSMILES}
+  conversion workflow and dataset for homopolymeric macromolecules}, Scientific
+  Data 11 (2024) 583.
+\newblock \href {https://doi.org/10.1038/s41597-024-03212-4}
+  {\path{doi:10.1038/s41597-024-03212-4}}.
+\newline\urlprefix\url{https://doi.org/10.1038/s41597-024-03212-4}
+
+\bibitem{kuo2008hydrogenbonding}
+S.-W. Kuo, \href{https://doi.org/10.1007/s10965-008-9192-4}{Hydrogen-bonding in
+  polymer blends}, Journal of Polymer Research 15~(6) (2008) 459--486.
+\newblock \href {https://doi.org/10.1007/s10965-008-9192-4}
+  {\path{doi:10.1007/s10965-008-9192-4}}.
+\newline\urlprefix\url{https://doi.org/10.1007/s10965-008-9192-4}
+
+\end{thebibliography}

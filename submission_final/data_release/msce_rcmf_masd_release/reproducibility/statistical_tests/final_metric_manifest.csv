@@ -1,0 +1,22 @@
+metric,split,model,mean_K,std_K,ci95_low_K,ci95_high_K,n_runs,notes
+MAE,primary,strongest_baseline,24.6678,0.8529,24.4986,24.8370,100,authoritative 100-run clean
+MAE,primary,final_model,23.9814,0.7988,23.8229,24.1399,100,authoritative 100-run clean
+RMSE,primary,strongest_baseline,36.7942,1.5908,36.4786,37.1099,100,authoritative 100-run clean
+RMSE,primary,final_model,36.2603,1.6086,35.9411,36.5795,100,authoritative 100-run clean
+Pearson,primary,strongest_baseline,0.945441,0.004927,0.944464,0.946419,100,authoritative 100-run clean
+Pearson,primary,final_model,0.946584,0.004865,0.945619,0.947550,100,authoritative 100-run clean
+MAE,hard_subgroup,strongest_baseline,29.3758,3.5108,28.6792,30.0724,100,hard=baseline top-20%% abs error (FIXED MASK)
+MAE,hard_subgroup,final_model,25.1516,4.0939,24.3393,25.9639,100,hard=baseline top-20%% abs error (FIXED MASK)
+MAE,external_holdout,strongest_baseline,27.6086,1.3141,27.3479,27.8694,100,external excluded from soup selection
+MAE,external_holdout,final_model,27.2047,1.0347,26.9994,27.4100,100,external excluded from soup selection
+delta_MAE,primary,final_vs_baseline,0.6864,,0.6121,0.7607,100,p=1.36e-33 paired-t; perm-p=5.00e-05; d=1.833
+delta_MAE,hard_subgroup,final_vs_baseline,4.2242,,3.5340,4.9145,100,p=2.54e-21 paired-t; perm-p=5.00e-05; d=1.214
+delta_MAE,external_holdout,final_vs_baseline,0.4039,,0.2305,0.5773,100,p=1.15e-05 paired-t; perm-p=5.00e-05; d=0.462
+MAE,cluster_aromatic_dense,final_vs_baseline,0.5247,,,,,p=8.082e-07; n_samples=159; baseline=26.06 final=25.53; Stable improvement over strongest baseline.
+MAE,cluster_ester_or_carbonate,final_vs_baseline,0.2554,,,,,p=2.223e-01; n_samples=29; baseline=22.07 final=21.81; Mean improvement is positive, but the 95% CI still overlaps zero.
+MAE,cluster_fluorinated,final_vs_baseline,0.6137,,,,,p=2.445e-03; n_samples=27; baseline=34.91 final=34.30; Stable improvement over strongest baseline.
+MAE,cluster_sulfone,final_vs_baseline,0.2913,,,,,p=4.050e-01; n_samples=3; baseline=9.94 final=9.64; Mean improvement is positive, but the 95% CI still overlaps zero.
+MAE,cluster_amide,final_vs_baseline,-0.1240,,,,,p=6.965e-01; n_samples=10; baseline=32.43 final=32.56; No stable improvement over strongest baseline.
+MAE,cluster_ether_oxygen,final_vs_baseline,0.6640,,,,,p=8.496e-12; n_samples=175; baseline=23.83 final=23.17; Stable improvement over strongest baseline.
+MAE,cluster_imide_like,final_vs_baseline,-0.5014,,,,,p=3.620e-01; n_samples=3; baseline=39.06 final=39.56; No stable improvement over strongest baseline.
+MAE,cluster_other,final_vs_baseline,-0.7327,,,,,p=1.120e-01; n_samples=36; baseline=49.07 final=49.80; No stable improvement over strongest baseline.

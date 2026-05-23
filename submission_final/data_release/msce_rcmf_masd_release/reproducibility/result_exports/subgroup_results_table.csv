@@ -1,0 +1,3 @@
+Method,N,Hard subgroup MAE (K),Hard subgroup mean 卤 std (K),Hard subgroup 95% CI,External holdout MAE (K),External holdout mean 卤 std (K),External holdout 95% CI
+Strongest baseline,100,29.37582329644097,29.3758 卤 3.5108 K,"[28.6792, 30.0724] K",27.60861650466919,27.6086 卤 1.3141 K,"[27.3479, 27.8694] K"
+main_core_sci2_masd_final_trisoup_100run,100,25.15159523275163,25.1516 卤 4.0939 K,"[24.3393, 25.9639] K",27.204684269886144,27.2047 卤 1.0347 K,"[26.9994, 27.4100] K"

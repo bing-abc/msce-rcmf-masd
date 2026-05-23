@@ -1,0 +1,5 @@
+Evaluation split,Baseline MAE (K),Final configuration MAE (K),MAE reduction (K),mean 卤 std,95% CI,Paired t-test p-value,Permutation p-value,Interpretation
+Main test set,24.667811318116822,23.981371523015014,0.686439967808064,0.6864 卤 0.3744 K,"[0.6121, 0.7607] K",1.3595886967437631e-33,4.999750012499375e-05,Stable improvement over strongest baseline.
+Hard subgroup,29.37582329644097,25.15159523275163,4.2242280636893375,4.2242 卤 3.4788 K,"[3.5340, 4.9145] K",2.5420864084520418e-21,4.999750012499375e-05,Stable improvement over strongest baseline.
+External holdout,27.60861650466919,27.204684269886144,0.40393223478304646,0.4039 卤 0.8739 K,"[0.2305, 0.5773] K",1.147095814063786e-05,4.999750012499375e-05,Stable improvement over strongest baseline.
+Weakest chemistry cluster (other),49.070376035902235,49.80309562916225,-0.7327195932600228,-0.7327 卤 4.5697 K,"[-1.6395, 0.1740] K",0.11202906805734446,0.11094445277736113,No stable improvement over strongest baseline.

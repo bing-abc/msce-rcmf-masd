@@ -1,0 +1,162 @@
+\documentclass[11pt]{article}
+
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{newtxtext,newtxmath}
+
+\graphicspath{{supplementary_figures/}{./}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\captionsetup[table]{name=Table,labelsep=period}
+\captionsetup[figure]{name=Figure,labelsep=period}
+
+\begin{document}
+
+\section*{Supplementary Information}
+
+\subsection*{Supplementary Methods}
+
+\paragraph{Dataset canonicalization and split protocol.}
+The reported revision uses a fixed primary train/validation/test partition of
+5409/1077/1077 samples together with a 302-sample external holdout. External
+records are excluded from training, validation, checkpoint selection, and soup
+selection. Canonicalization and exact-key overlap removal are applied before
+split generation so that no exact duplicate records remain between the primary
+evaluation pool and the external holdout after cleanup.
+
+\paragraph{Hard-subgroup mask.}
+The hard subgroup is defined independently from the proposed model as the top
+20\% of samples ranked by absolute error of the strongest simple multimodal
+baseline. The mask is fixed per split-seed and shared across all compared
+methods. This protocol yields a baseline-defined difficult subset rather than a
+chemistry-defined polymer class and avoids selecting favorable samples from the
+proposed model.
+
+\paragraph{Chemistry-space proximity metric.}
+External chemistry-space proximity is summarized by the maximum train-set
+Tanimoto similarity computed from Morgan fingerprints (radius 2, 2048 bits).
+Near-train and far-train subsets are defined from the resulting similarity
+distribution, and within-domain versus shifted-domain subsets are tracked as
+complementary chemistry-oriented analyses.
+
+\paragraph{polyBERT audit protocol.}
+polyBERT was fine-tuned under the same train/validation/test/external protocol
+as the primary models and evaluated as a matched five-seed audit over seeds
+10--14. The execution script targeted 30 epochs per seed with validation-based
+checkpoint selection. Because only five matched seeds were completed, polyBERT
+is treated as a domain-specific sequence-baseline audit rather than as a
+100-run statistical comparator. The hard-subgroup values reported for this audit
+belong to the matched five-seed baseline slice and should not be pooled with the
+100-run hard-subgroup package used in the main manuscript. The polyBERT
+hard-subgroup audit is reported only as an internal diagnostic of that
+five-seed audit and is not used in the main hard-subgroup claim.
+
+\paragraph{Statistical protocol.}
+Paired significance tests in the main manuscript were computed across 100 frozen
+training seeds for the strongest baseline versus the proposed model. The paired
+$t$-tests, Wilcoxon signed-rank tests, bootstrap confidence intervals, and sign
+rates therefore quantify stability under training randomness rather than
+population-level inference over all possible polymer samples.
+
+\bigskip
+
+\begin{center}
+\captionof{table}{Limited five-seed ablation audit; not pooled with the 100-run headline package. MSCE + MASD without RCMF performs better than the full MSCE + RCMF + MASD variant on this slice, supporting MASD as the measurable correction component and RCMF as auxiliary diagnostic conditioning only.}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.28\linewidth}ccccccc}
+  \toprule
+  Model & $N$ & Primary MAE (K) & Hard MAE (K) & External MAE (K) & $\Delta$ primary (K) & $\Delta$ hard (K) & $\Delta$ external (K) \\
+  \midrule
+  Strongest baseline & 5 & 24.938 & 31.972 & 28.016 & 0.000 & 0.000 & 0.000 \\
+  MSCE only & 5 & 24.418 & 31.405 & 27.857 & 0.520 & 0.567 & 0.160 \\
+  MSCE + RCMF & 5 & 24.418 & 31.413 & 27.857 & 0.520 & 0.559 & 0.160 \\
+  MSCE + MASD (no RCMF) & 5 & 24.381 & 30.578 & 27.553 & 0.557 & 1.394 & 0.464 \\
+  MSCE + RCMF + MASD & 5 & 24.409 & 30.708 & 27.800 & 0.529 & 1.264 & 0.216 \\
+  \bottomrule
+\end{tabular}}
+\end{center}
+
+\bigskip
+
+\begin{center}
+\captionof{table}{External chemistry-defined subgroup performance from the frozen 100-run audit. Positive $\Delta$MAE indicates lower MAE for the proposed model.}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.18\linewidth}cccccc}
+  \toprule
+  Subgroup & $N$ & Baseline MAE (K) & Proposed MAE (K) & $\Delta$ MAE (K) & Mean max train Tanimoto & Mean uncertainty \\
+  \midrule
+  Near-train & 153 & 21.269 & 20.483 & 0.786 & 0.755 & 1.060 \\
+  Far-train & 149 & 34.118 & 34.107 & 0.011 & 0.500 & 0.997 \\
+  High-$T_g$ & 152 & 28.259 & 27.605 & 0.654 & 0.667 & 1.067 \\
+  Low-$T_g$ & 150 & 26.949 & 26.799 & 0.151 & 0.590 & 0.990 \\
+  High aromaticity & 163 & 26.053 & 25.540 & 0.513 & 0.667 & 1.054 \\
+  Low aromaticity & 139 & 29.433 & 29.157 & 0.276 & 0.585 & 0.999 \\
+  Within-domain & 135 & 21.660 & 20.874 & 0.786 & 0.773 & 1.073 \\
+  Shifted-domain & 167 & 32.417 & 32.322 & 0.095 & 0.513 & 0.993 \\
+  \bottomrule
+\end{tabular}}
+\end{center}
+
+\bigskip
+
+\begin{center}
+\captionof{table}{Seed-level polyBERT audit under the matched five-seed protocol. Hard-subgroup values in Table~S3 correspond to the matched five-seed polyBERT audit pipeline and should not be compared directly with the 100-run hard-subgroup values in the main text. The polyBERT hard-subgroup audit is reported only as an internal diagnostic of that five-seed audit and is not used in the main hard-subgroup claim. The authoritative hard-subgroup claim in the manuscript is the 100-run package reported in Table~3 and Figure~3; Table~S3 is included only to characterize the domain-specific sequence-baseline audit.}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ccccccc}
+  \toprule
+  Seed & Baseline primary MAE (K) & polyBERT primary MAE (K) & Baseline hard MAE (K) & polyBERT hard MAE (K) & Baseline external MAE (K) & polyBERT external MAE (K) \\
+  \midrule
+  10 & 25.974 & 26.454 & 69.440 & 56.725 & 28.560 & 27.144 \\
+  11 & 26.150 & 23.706 & 66.748 & 47.878 & 28.738 & 27.759 \\
+  12 & 25.595 & 25.368 & 67.348 & 51.899 & 25.328 & 26.763 \\
+  13 & 24.113 & 23.086 & 63.335 & 47.507 & 28.156 & 27.779 \\
+  14 & 25.175 & 23.700 & 67.295 & 51.161 & 27.759 & 24.768 \\
+  \bottomrule
+\end{tabular}}
+\end{center}
+
+\bigskip
+
+\begin{center}
+\captionof{table}{Paired statistical tests across the frozen 100-run baseline-versus-proposed comparison. The reported intervals and sign rates quantify stability under training randomness rather than population-level inference over all possible polymer samples.}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.16\linewidth}cccccccc}
+  \toprule
+  Split & $N$ & Baseline mean MAE (K) & Proposed mean MAE (K) & Mean improvement (K) & 95\% bootstrap CI (K) & Paired $t$ $p$-value & Wilcoxon signed-rank $p$-value & Sign rate \\
+  \midrule
+  Primary test & 100 & 24.668 & 23.981 & 0.686 & [0.6141, 0.7599] & $1.360\times 10^{-33}$ & $1.948\times 10^{-18}$ & 100/100 \\
+  Hard subgroup & 100 & 29.376 & 25.152 & 4.224 & [3.5587, 4.9166] & $2.542\times 10^{-21}$ & $5.743\times 10^{-18}$ & 96/100 \\
+  External holdout & 100 & 27.609 & 27.205 & 0.404 & [0.2365, 0.5734] & $1.147\times 10^{-5}$ & $7.977\times 10^{-6}$ & 72/100 \\
+  \bottomrule
+\end{tabular}}
+\end{center}
+
+\clearpage
+
+\begin{center}
+\includegraphics[width=0.80\textwidth]{Supp_Figure_S1.png}
+\captionof{figure}{Distribution of maximum train-set Tanimoto similarity for the external holdout. The mean maximum similarity is 0.629, supporting the description of the external evaluation as a moderate chemistry-space shift rather than an extreme out-of-domain challenge.}
+\end{center}
+
+\bigskip
+
+\begin{center}
+\includegraphics[width=0.92\textwidth]{Supp_Figure_S2.png}
+\captionof{figure}{Cluster-level error diagnosis for chemistry families with and without stable improvement. Aromatic-dense, fluorinated, and ether-oxygen families show positive mean correction, whereas amide, imide-like, and heterogeneous other families do not show stable improvement. Families marked with an asterisk have $n<10$ and are shown for transparency only as exploratory diagnostics.}
+\end{center}
+
+\bigskip
+
+\begin{center}
+\includegraphics[width=0.88\textwidth]{Supp_Figure_S3.png}
+\captionof{figure}{Limited five-seed ablation audit. MASD provides the clearest measurable correction benefit in this audit, whereas the full RCMF + MASD stack does not outperform the no-RCMF MASD variant on the same five-seed slice.}
+\end{center}
+
+\end{document}

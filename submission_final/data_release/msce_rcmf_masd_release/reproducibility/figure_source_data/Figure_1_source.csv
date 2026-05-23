@@ -1,0 +1,7 @@
+stage,content
+Data,Train/validation/test + external holdout; overlap removed
+Multimodal views,"Graph, descriptors, chain context"
+Prediction,MSCE + MASD with validation-only selection
+Auxiliary diagnostic conditioning,Reliability used as bounded diagnostic path
+Evaluation,"Primary, baseline-defined difficult subset, external shift"
+Design implication,Bounded retrospective Tg screening and failure disclosure

@@ -1,0 +1,9 @@
+Cluster,N_test,MAE_delta_K,Interpretation,Design_verdict,mean_aromatic_rings,mean_max_train_tanimoto,n_samples,delta_K
+other,36,-0.733,No stable improvement over strongest baseline.,CAUTION — possible degradation; use baseline or seek experimental validation,0.0555555555555555,0.4382614259521264,36,-0.7327195932600228
+imide_like,3,-0.501,No stable improvement over strongest baseline.,CAUTION — possible degradation; use baseline or seek experimental validation,5.333333333333333,0.735766254058937,3,-0.5014129740397137
+amide,10,-0.124,No stable improvement over strongest baseline.,NEUTRAL — no meaningful change vs baseline,2.2,0.6782749246836977,10,-0.1239796279907223
+ester_or_carbonate,29,0.255,"Mean improvement is positive, but the 95% CI still overlaps zero.",NEUTRAL — no meaningful change vs baseline,1.896551724137931,0.6790911848768685,29,0.2553522249419111
+sulfone,3,0.291,"Mean improvement is positive, but the 95% CI still overlaps zero.",NEUTRAL — no meaningful change vs baseline,4.0,0.7115895800106325,3,0.2912903900146487
+aromatic_dense,159,0.525,Stable improvement over strongest baseline.,RELIABLE — use model confidently for this family,2.5534591194968552,0.6704304614945567,159,0.5246703602532918
+fluorinated,27,0.614,Stable improvement over strongest baseline.,RELIABLE — use model confidently for this family,1.148148148148148,0.5644035394751348,27,0.6136757182368524
+ether_oxygen,175,0.664,Stable improvement over strongest baseline.,RELIABLE — use model confidently for this family,1.6114285714285714,0.6788721626420864,175,0.6640032228742325
