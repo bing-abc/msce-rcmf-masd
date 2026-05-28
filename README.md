@@ -4,7 +4,7 @@ Public repository name: `msce-rcmf-masd`
 
 This repository contains the code for the paper:
 
-> **Selective Multimodal Regression under Heterogeneous Branch Reliability for Polymer Glass-Transition Temperature Prediction**
+> **Reliability-filtered screening of polymer glass-transition temperatures with error-tail correction**
 
 The method is a three-stage selective multimodal regression chain:
 
@@ -12,7 +12,7 @@ The method is a three-stage selective multimodal regression chain:
 - `RCMF`: reliability-conditioned multimodal fusion
 - `MASD`: capped signed correction focused on the hard subgroup
 
-The evaluation domain is polymer glass-transition temperature (`T_g`) prediction, but the paper is positioned as a pattern-recognition methodology study about uneven branch reliability in multimodal regression.
+The manuscript is positioned as a reliability-filtered polymer screening study for Materials & Design, with emphasis on error-tail correction, applicability-domain control, and candidate-ranking risk.
 
 ## Authors
 
@@ -30,12 +30,13 @@ It is intended to provide:
 - the experiment entry points used by the paper
 - the protocol-matched baseline and audit scripts referenced by the paper
 - the instructions needed to reproduce the released protocol
+- processed split definitions, fixed hard-subgroup masks, per-figure source data, statistical-test outputs, and result exports in the public release package
 
-It is **not** intended to blindly re-host every merged upstream source table. For public release, the code repository should publish the processing pipeline and source-specific access instructions, while large artifacts and archival snapshots should go to Zenodo or another repository archive.
+It is **not** intended to blindly re-host every merged upstream source table. For public release, the code repository publishes the processing pipeline, source-specific access instructions, and the paper-cited reproducibility artifacts.
 
 For public GitHub release, keep the repository focused on reproducible code and
-paper-cited controls. Do not use the repository as a dump for manuscript
-packaging, presentation drafts, or large generated experiment artifacts.
+paper-cited controls. Do not use the repository as a dump for presentation
+drafts or unrelated generated experiment artifacts.
 
 ## Repository layout
 
@@ -44,8 +45,7 @@ packaging, presentation drafts, or large generated experiment artifacts.
 - [train](./train): training harness, calibration helpers, and controlled overrides
 - [polymer_tg/scripts](./polymer_tg/scripts): paper-facing runners, ablations, and evaluation scripts
 - [eval](./eval): metrics and comparator summaries
-
-The local workspace also contains manuscript and packaging assets under `outputs/paper`, but those are kept out of the public code release by default.
+- [submission_final/data_release/msce_rcmf_masd_release](./submission_final/data_release/msce_rcmf_masd_release): public reproducibility package with processed split definitions, fixed masks, figure source data, statistical outputs, result exports, processing code, and upstream identifiers
 
 ## Important naming note
 
